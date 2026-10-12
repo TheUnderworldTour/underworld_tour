@@ -1,0 +1,26 @@
+name: PR Agent
+
+  on:
+    pull_request:
+      types: [opened, reopened, ready_for_review]
+    issue_comment:   # lets you comment /review /improve /ask manually
+
+  jobs:
+    pr_agent_job:
+      if: ${{ github.event.sender.type != 'Bot' }}
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        issues: write
+        pull-requests: write
+      steps:
+        - name: PR Agent action step
+          uses: the-pr-agent/pr-agent@main
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup
+            OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
+            config.model: "openrouter/z-ai/glm-5.3-flash"        # cheap model = cheap reviews
+            config.fallback_models: '["openrouter/anthropic/claude-haiku-4-5"]'
+            github_action_config.auto_review: "true"    # auto-review every PR
+            github_action_config.auto_describe: "false"
+            github_action_config.auto_improve: "false"
