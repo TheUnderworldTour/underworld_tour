@@ -1,0 +1,7 @@
+[pr_reviewer]
+  extra_instructions = """\
+  Check against our Definition of Done in CONTRIBUTING.md: \
+  audio assets must be BPM-labeled, timing-window changes must note a \
+  hardware sync test, combat changes should state whether the fight is \
+  still winnable and losable. Flag anything missing from the PR description.\
+  """
