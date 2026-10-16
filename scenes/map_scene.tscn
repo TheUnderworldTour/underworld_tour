@@ -1,4 +1,24 @@
 [gd_scene format=3 uid="uid://cu21ybrqkyyer"]
 
-[node name="Node3D" type="Node3D" unique_id=1994515897]
+[ext_resource type="Script" uid="uid://v5w7hrq1xw1e" path="res://scenes/map_camera.gd" id="1_0wcw4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_pr7xa"]
+size = Vector3(12, 0.2, 40)
+
+[node name="MapScene" type="Node3D" unique_id=1994515897]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3841858e-07, 0)
+
+[node name="MapSurface" type="MeshInstance3D" parent="." unique_id=165163470]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0026855469, 0)
+mesh = SubResource("BoxMesh_pr7xa")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1391498203]
+transform = Transform3D(1, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 15, 20)
+projection = 1
+current = true
+size = 16.0
+script = ExtResource("1_0wcw4")
+scroll_step = null
+slide_speed = null
+map_top = null
+map_bottom = null
