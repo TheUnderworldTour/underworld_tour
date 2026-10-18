@@ -16,9 +16,5 @@ A change is "done" when it passes **all** of the gates below. "It works on my ma
 | Docs updated | PR template checkbox: "README / design doc updated if behavior changed"; reviewer enforces | from **Week 3** | PR author |
 | Demo-level changes keep the loop winnable/losable | after **Week 6**, every combat change requires one recorded win and one loss attached to the PR | starts **Week 6** | Designer |
 
-### Before the code exists (Weeks 1–3)
-
-Most gates can't run yet because there's nothing to run them on. During weeks 1–2 the definition of done is:
-
-- Design decision recorded in the shared doc (the "gate" is the doc link in the meeting notes)
-- **Week 3 deliverable includes standing up the CI**: a build job, a lint job, and a PR template.
+### Style Guidelines
+Style Guidelines for this Godot can be found [here](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html). The review agent will check these guidelines in all PRs.
