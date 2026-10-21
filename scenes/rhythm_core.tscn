@@ -27,3 +27,21 @@ offset_top = 85.0
 offset_right = 84.0
 offset_bottom = 108.0
 text = "Combo: 0"
+
+[node name="Playfield" type="Node2D" parent="." unique_id=939433344]
+
+[node name="LaneLeft" type="Node2D" parent="Playfield" unique_id=489155129]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneLeft" unique_id=842830140]
+
+[node name="LaneRight" type="Node2D" parent="Playfield" unique_id=848399786]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneRight" unique_id=162711547]
+
+[node name="LaneUp" type="Node2D" parent="Playfield" unique_id=505571021]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneUp" unique_id=1728134155]
+
+[node name="LaneDown" type="Node2D" parent="Playfield" unique_id=431077587]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneDown" unique_id=716696448]
