@@ -12,10 +12,18 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Score" type="Label" parent="HUD" unique_id=890903318]
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=890903318]
 layout_mode = 0
 offset_left = 15.0
 offset_top = 52.0
 offset_right = 76.0
 offset_bottom = 75.0
 text = "Score: 0"
+
+[node name="ComboLabel" type="Label" parent="HUD" unique_id=1425864123]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 85.0
+offset_right = 84.0
+offset_bottom = 108.0
+text = "Combo: 0"
