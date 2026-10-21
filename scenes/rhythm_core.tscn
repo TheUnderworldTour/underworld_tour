@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b078noinj5olf"]
+
+[ext_resource type="PackedScene" uid="uid://bkx5l6r8f0f7e" path="res://scenes/conductor.tscn" id="1_7cdm0"]
+
+[node name="RhythmCore" type="Node2D" unique_id=1686427591]
+
+[node name="Conductor" parent="." unique_id=218649454 instance=ExtResource("1_7cdm0")]
+
+[node name="HUD" type="Control" parent="." unique_id=1750091761]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Score" type="Label" parent="HUD" unique_id=890903318]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 52.0
+offset_right = 76.0
+offset_bottom = 75.0
+text = "Score: 0"
