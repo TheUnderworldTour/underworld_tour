@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://0p4udw2ctx1m"]
 
-[ext_resource type="Texture2D" uid="uid://byeal44hvg06e" path="res://assets/arrow_off.png" id="1_t3yvt"]
+[ext_resource type="Texture2D" uid="uid://ccpe61essrjh6" path="res://assets/arrow_on.png" id="1_t3yvt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ys324"]
 
 [node name="Note" type="Area2D" unique_id=1572502280]
+top_level = true
 
 [node name="Arrow" type="Sprite2D" parent="." unique_id=1449455256]
 scale = Vector2(0.06, 0.06)
