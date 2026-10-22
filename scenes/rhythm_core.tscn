@@ -14,6 +14,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ScoreLabel" type="Label" parent="HUD" unique_id=890903318]
+top_level = true
 layout_mode = 0
 offset_left = 15.0
 offset_top = 52.0
@@ -22,6 +23,7 @@ offset_bottom = 75.0
 text = "Score: 0"
 
 [node name="ComboLabel" type="Label" parent="HUD" unique_id=1425864123]
+top_level = true
 layout_mode = 0
 offset_left = 11.0
 offset_top = 85.0
@@ -56,6 +58,6 @@ text = "Combo: 0"
 [node name="Note" parent="Playfield/LaneDown" unique_id=1064172980 instance=ExtResource("2_ys324")]
 
 [node name="Background" type="ColorRect" parent="." unique_id=654271884]
-offset_right = 1190.0
-offset_bottom = 673.0
+offset_right = 1156.0
+offset_bottom = 651.0
 color = Color(0.043137256, 0.35686275, 0.83137256, 1)
