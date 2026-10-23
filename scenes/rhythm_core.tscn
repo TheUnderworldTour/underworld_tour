@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://b078noinj5olf"]
+
+[ext_resource type="PackedScene" uid="uid://bkx5l6r8f0f7e" path="res://scenes/conductor.tscn" id="1_7cdm0"]
+[ext_resource type="Texture2D" uid="uid://byeal44hvg06e" path="res://assets/arrow_off.png" id="2_wxi2m"]
+[ext_resource type="PackedScene" uid="uid://0p4udw2ctx1m" path="res://scenes/note.tscn" id="2_ys324"]
+[ext_resource type="Script" uid="uid://ctsbp3acugwtu" path="res://scripts/rhythm_core.gd" id="3_core"]
+
+[node name="RhythmCore" type="Node2D" unique_id=1686427591]
+script = ExtResource("3_core")
+
+[node name="Conductor" parent="." unique_id=218649454 instance=ExtResource("1_7cdm0")]
+
+[node name="Background" type="ColorRect" parent="." unique_id=654271884]
+offset_right = 1156.0
+offset_bottom = 651.0
+color = Color(0.043137256, 0.35686275, 0.83137256, 1)
+
+[node name="HUD" type="Control" parent="." unique_id=1750091761]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=890903318]
+top_level = true
+layout_mode = 0
+offset_left = 15.0
+offset_top = 52.0
+offset_right = 76.0
+offset_bottom = 75.0
+text = "Score: 0"
+
+[node name="ComboLabel" type="Label" parent="HUD" unique_id=1425864123]
+top_level = true
+layout_mode = 0
+offset_left = 11.0
+offset_top = 85.0
+offset_right = 84.0
+offset_bottom = 108.0
+text = "Combo: 0"
+
+[node name="Playfield" type="Node2D" parent="." unique_id=939433344]
+
+[node name="LaneLeft" type="Node2D" parent="Playfield" unique_id=489155129]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneLeft" unique_id=842830140]
+top_level = true
+position = Vector2(350, 500)
+rotation = -1.5707964
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_wxi2m")
+
+[node name="Note" parent="Playfield/LaneLeft" unique_id=1572502280 instance=ExtResource("2_ys324")]
+direction = 3
+target_position = Vector2(350, 500)
+
+[node name="LaneRight" type="Node2D" parent="Playfield" unique_id=848399786]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneRight" unique_id=162711547]
+top_level = true
+position = Vector2(800, 500)
+rotation = 1.5707964
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_wxi2m")
+
+[node name="Note" parent="Playfield/LaneRight" unique_id=1299138532 instance=ExtResource("2_ys324")]
+direction = 1
+target_position = Vector2(800, 500)
+
+[node name="LaneUp" type="Node2D" parent="Playfield" unique_id=505571021]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneUp" unique_id=1728134155]
+top_level = true
+position = Vector2(500, 500)
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_wxi2m")
+
+[node name="Note" parent="Playfield/LaneUp" unique_id=1775389195 instance=ExtResource("2_ys324")]
+target_position = Vector2(500, 500)
+
+[node name="LaneDown" type="Node2D" parent="Playfield" unique_id=431077587]
+
+[node name="Receptor" type="Sprite2D" parent="Playfield/LaneDown" unique_id=716696448]
+top_level = true
+position = Vector2(650, 500)
+rotation = 3.1415927
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_wxi2m")
+
+[node name="Note" parent="Playfield/LaneDown" unique_id=1064172980 instance=ExtResource("2_ys324")]
+direction = 2
+target_position = Vector2(650, 500)
