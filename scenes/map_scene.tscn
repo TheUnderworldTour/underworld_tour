@@ -1,6 +1,73 @@
 [gd_scene format=3 uid="uid://cu21ybrqkyyer"]
 
 [ext_resource type="Script" uid="uid://v5w7hrq1xw1e" path="res://scenes/map_camera.gd" id="1_0wcw4"]
+[ext_resource type="Script" uid="uid://bw0ikd5f3oeue" path="res://scenes/map_path.gd" id="2_ne7uw"]
+
+[sub_resource type="Shader" id="Shader_0wcw4"]
+code = "shader_type spatial;
+
+uniform vec4 base_color : source_color = vec4(0.28, 0.30, 0.23, 1.0);
+uniform vec4 patch_color : source_color = vec4(0.17, 0.20, 0.14, 1.0);
+
+uniform float patch_scale = 1.5;
+uniform float grain_strength = 0.06;
+
+varying vec3 local_position;
+
+
+float random_value(vec2 point) {
+	return fract(sin(dot(point, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+
+float noise(vec2 point) {
+	vec2 cell = floor(point);
+	vec2 offset = fract(point);
+	vec2 blend = offset * offset * (3.0 - 2.0 * offset);
+
+	float a = random_value(cell);
+	float b = random_value(cell + vec2(1.0, 0.0));
+	float c = random_value(cell + vec2(0.0, 1.0));
+	float d = random_value(cell + vec2(1.0, 1.0));
+
+	return mix(
+		mix(a, b, blend.x),
+		mix(c, d, blend.x),
+		blend.y
+	);
+}
+
+
+void vertex() {
+	local_position = VERTEX;
+}
+
+
+void fragment() {
+	vec2 point = local_position.xz * patch_scale;
+
+	float patches = noise(point) * 0.65;
+	patches += noise(point * 2.3 + vec2(8.2, 3.7)) * 0.35;
+
+	float grain = noise(point * 12.0) - 0.5;
+
+	ALBEDO = clamp(
+		mix(base_color.rgb, patch_color.rgb, patches)
+		+ vec3(grain * grain_strength),
+		vec3(0.0),
+		vec3(1.0)
+	);
+
+	ROUGHNESS = 1.0;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ainuc"]
+render_priority = 0
+shader = SubResource("Shader_0wcw4")
+shader_parameter/base_color = Color(0.28, 0.3, 0.23, 1)
+shader_parameter/patch_color = Color(0.17, 0.2, 0.14, 1)
+shader_parameter/patch_scale = 1.5
+shader_parameter/grain_strength = 0.06
 
 [sub_resource type="BoxMesh" id="BoxMesh_pr7xa"]
 size = Vector3(12, 0.2, 40)
@@ -10,15 +77,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3841858e-07, 0)
 
 [node name="MapSurface" type="MeshInstance3D" parent="." unique_id=165163470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0026855469, 0)
+material_override = SubResource("ShaderMaterial_ainuc")
 mesh = SubResource("BoxMesh_pr7xa")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1391498203]
-transform = Transform3D(1, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 15, 20)
-projection = 1
+transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 10, 20)
 current = true
-size = 16.0
+fov = 50.0
+size = 10.0
 script = ExtResource("1_0wcw4")
-scroll_step = null
-slide_speed = null
-map_top = null
-map_bottom = null
+map_top = -15.0
+map_bottom = 17.0
+
+[node name="MapPath" type="Node3D" parent="." unique_id=526376712]
+script = ExtResource("2_ne7uw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1803069915]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
