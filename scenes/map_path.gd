@@ -10,14 +10,13 @@ var line_material: StandardMaterial3D
 
 
 func _ready() -> void:
-	# Unshaded materials are visible without a light.
 	cube_material = StandardMaterial3D.new()
 	cube_material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-	cube_material.albedo_color = Color(1.0, 0.9, 0.3)
+	cube_material.albedo_color = Color(0.362, 0.373, 0.376, 1.0)
 
 	line_material = StandardMaterial3D.new()
 	line_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	line_material.albedo_color = Color(0.15, 0.15, 0.2)
+	line_material.albedo_color = Color(1.0, 1.0, 1.0, 1.0)
 
 	generate_path()
 	generate_pillars()
@@ -28,7 +27,7 @@ func generate_path() -> void:
 	var count := maxi(node_count, 2)
 
 	for i in range(count):
-		# Progress goes from 0 at the start to 1 at the end.
+		# progress goes from 0 at the start to 1 at the end
 		var progress := float(i) / float(count - 1)
 
 		var point := Vector3(
@@ -37,7 +36,7 @@ func generate_path() -> void:
 			lerpf(start_z, end_z, progress)
 		)
 
-		# Keep the first and last cubes centered.
+		# keep the first and last cubes centered
 		if i == 0 or i == count - 1:
 			point.x = 0.0
 
@@ -82,7 +81,7 @@ func generate_pillars() -> void:
 	material.albedo_color = Color(0.45, 0.45, 0.48)
 	material.roughness = 1.0
 
-	# Seven pillars along each side of the map.
+	# seven pillars along each side of the map
 	for i in range(7):
 		var progress := float(i) / 6.0
 		var pillar_z := lerpf(start_z, end_z, progress)
@@ -97,8 +96,8 @@ func generate_pillars() -> void:
 
 			add_child(pillar)
 
-			# Board edges are at X = -6 and X = 6.
-			# Y places the bottom of each pillar on the board.
+			# board edges are at X = -6 and X = 6
+			# Y places the bottom of each pillar on the board
 			pillar.position = Vector3(
 				side * 5.0,
 				1.35,
