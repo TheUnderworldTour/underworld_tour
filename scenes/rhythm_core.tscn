@@ -51,8 +51,6 @@ scale = Vector2(0.06, 0.06)
 texture = ExtResource("2_wxi2m")
 
 [node name="Note" parent="Playfield/LaneLeft" unique_id=1572502280 instance=ExtResource("2_ys324")]
-position = Vector2(350, 0)
-rotation = -1.5707964
 direction = 3
 target_position = Vector2(350, 500)
 
