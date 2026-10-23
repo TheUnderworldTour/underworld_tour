@@ -29,6 +29,10 @@ var last_reported_beat: int = 0
 ## Number of count-in beats played by the timer before the audio starts.
 var beats_before_start: int = 0
 
+## Enables the wall-clock fallback after the count-in when no audio stream
+## is assigned, so gameplay still works while testing without audio.
+var _use_fallback_clock := false
+
 ## Current measure number, cycles from 1 through `measures`.
 var measure_count: int = 1
 
@@ -47,12 +51,15 @@ func _physics_process(_delta: float) -> void:
 	# reported playback position with the time since the last mix and
 	# subtracting output latency gives a more accurate clock than
 	# `get_playback_position()` alone.
-	if playing:
+	if playing and stream != null:
 		song_position = get_playback_position() + AudioServer.get_time_since_last_mix()
 		song_position -= AudioServer.get_output_latency()
-		# Convert the position to a beat index, offset by any count-in beats.
-		song_position_in_beats = int(floor(song_position / sec_per_beat)) + beats_before_start
-		_report_beat()
+	elif _use_fallback_clock:
+		song_position += _delta
+	else:
+		return
+	song_position_in_beats = int(floor(song_position / sec_per_beat)) + beats_before_start
+	_report_beat()
 
 
 func _report_beat() -> void:
@@ -112,4 +119,5 @@ func _on_start_timer_timeout() -> void:
 		# Count-in finished: start the actual playback and stop the timer.
 		play()
 		start_timer.stop()
+		_use_fallback_clock = stream == null
 	_report_beat()
