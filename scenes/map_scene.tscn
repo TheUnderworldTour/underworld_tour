@@ -81,9 +81,9 @@ material_override = SubResource("ShaderMaterial_ainuc")
 mesh = SubResource("BoxMesh_pr7xa")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1391498203]
-transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 10, 20)
+transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 7, 20)
 current = true
-fov = 50.0
+fov = 65.0
 size = 10.0
 script = ExtResource("1_0wcw4")
 map_top = -15.0
