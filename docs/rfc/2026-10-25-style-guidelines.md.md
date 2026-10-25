@@ -19,7 +19,7 @@
 
 The team needs to decide on a unified style so we can figure out what each piece of the UI looks like. We're in the starting phases, so we didn't really need it prior, but going forward need figure out what look we are going for.
 
-If we don't have a clear idea of the style we want, when creating UI elements, assets, and animations, we could end up creating a bunch of disjointed pieces that don't mesh well. This is exarcerbated by the fact that we are unable to meet frequently for collaboration, so most work is done remote.
+If we don't have a clear idea of the style we want, when creating UI elements, assets, and animations, we could end up creating a bunch of disjointed pieces that don't mesh well. This is exacerbated by the fact that we are unable to meet frequently for collaboration, so most work is done remote.
 
 ## Options
 
@@ -29,7 +29,7 @@ Using less than a thousand polygons per model. Since the polygon count is low, t
 
 ### Option B: High-Poly
 
-Having more human, realistic models. More complex, but lends to realism and afford expressivity through facial expressions. More work to produce models from scratch,, but steps can and have been taken to adapt previous low-poly assets.
+Having more human, realistic models. More complex, but lends to realism and afford expressivity through facial expressions. More work to produce models from scratch, but steps can and have been taken to adapt previous low-poly assets.
 
 ### Option C: Pixel Art
 
@@ -49,13 +49,15 @@ I'd recommend going for the Low-Poly style, since that was the idea I had in min
 
 We'd know this option worked based on how well we progress with this in mind. When designing UI assets such as health bars, menus, and items, whether or not we're able to complete them in a reasonable time frame and whether they look good put together.
 
-For testing if the system works, it really just comes down to deadlines, whether we can have visuals done in a resasonable timeline.
+For testing if the system works, it really just comes down to deadlines, whether we can have visuals done in a reasaonable timeline.
 
 ## Constraints
 
 We should not be using generative AI when creating visual or audio assets.
 
 ## Delegation and Validation
+
+#TODO
 
 - **What you handed to AI tools** on this decision, whether that was the analysis, the prototype, the tests, or the writing.
 - **What checks made that reasonable**: tests, CI, review gates, a staging environment, a rollback path. Name the ones that actually exist in your repo, not the ones you intend to build.
