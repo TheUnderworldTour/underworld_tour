@@ -1,3 +1,4 @@
+
 name: PR Agent
 
 on:
@@ -9,18 +10,45 @@ jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot' }}
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       issues: write
       pull-requests: write
+
     steps:
+      # Check whether the PR contains reviewable files
+      - name: Check for reviewable files
+        id: reviewable
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          files=$(gh api \
+            "repos/$REPO/pulls/$PR_NUMBER/files" \
+            --paginate \
+            --jq '.[].filename')
+
+          if echo "$files" | grep -Eq '\.(gd|cs|py|js|ts|json|yaml|yml|md|toml|cfg|tscn|tres|shader|gdshader)$'; then
+            echo "has_text_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_text_changes=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping PR Agent: no reviewable text files."
+          fi
+
+      # Run PR Agent only when appropriate
       - name: PR Agent action step
+        if: |
+          github.event_name == 'issue_comment' ||
+          steps.reviewable.outputs.has_text_changes == 'true'
         uses: codium-ai/pr-agent@main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENROUTER__KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          config.model: "openrouter/z-ai/glm-5.3-flash"        # cheap model = cheap reviews
+          config.model: "openrouter/z-ai/glm-5.3-flash"
           config.fallback_models: '["openrouter/anthropic/claude-haiku-4-5"]'
-          github_action_config.auto_review: "true"    # auto-review every PR
+          github_action_config.auto_review: "true"
           github_action_config.auto_describe: "false"
           github_action_config.auto_improve: "false"
