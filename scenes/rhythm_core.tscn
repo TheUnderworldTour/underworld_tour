@@ -4,6 +4,15 @@
 [ext_resource type="Texture2D" uid="uid://byeal44hvg06e" path="res://assets/arrow_off.png" id="2_wxi2m"]
 [ext_resource type="PackedScene" uid="uid://0p4udw2ctx1m" path="res://scenes/note.tscn" id="2_ys324"]
 [ext_resource type="Script" uid="uid://ctsbp3acugwtu" path="res://scripts/rhythm_core.gd" id="3_core"]
+[ext_resource type="Script" uid="uid://ctj0ln4i5xbm3" path="res://scripts/receptors/left_off_receptor.gd" id="4_lq8vt"]
+[ext_resource type="Texture2D" uid="uid://ccpe61essrjh6" path="res://assets/arrow_on.png" id="5_ss7mm"]
+[ext_resource type="Script" uid="uid://cerk2h0vx1idx" path="res://scripts/receptors/right_off_receptor.gd" id="7_i86ew"]
+[ext_resource type="Script" uid="uid://ctngp3tamfv8t" path="res://scripts/receptors/up_off_receptor.gd" id="8_ymt2k"]
+[ext_resource type="Script" uid="uid://ckw2ryorju3rm" path="res://scripts/receptors/down_off_receptor.gd" id="9_gy7fg"]
+
+[sub_resource type="GDScript" id="GDScript_i86ew"]
+script/source = "extends Node2D
+"
 
 [node name="RhythmCore" type="Node2D" unique_id=1686427591]
 script = ExtResource("3_core")
@@ -42,13 +51,21 @@ text = "Combo: 0"
 [node name="Playfield" type="Node2D" parent="." unique_id=939433344]
 
 [node name="LaneLeft" type="Node2D" parent="Playfield" unique_id=489155129]
+script = SubResource("GDScript_i86ew")
 
-[node name="Receptor" type="Sprite2D" parent="Playfield/LaneLeft" unique_id=842830140]
+[node name="OffReceptor" type="Sprite2D" parent="Playfield/LaneLeft" unique_id=842830140]
 top_level = true
-position = Vector2(350, 500)
+position = Vector2(350, 550)
 rotation = -1.5707964
-scale = Vector2(0.06, 0.06)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_wxi2m")
+script = ExtResource("4_lq8vt")
+
+[node name="OnReceptor" type="Sprite2D" parent="Playfield/LaneLeft" unique_id=122646102]
+position = Vector2(350, 550)
+rotation = -1.5707964
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_ss7mm")
 
 [node name="Note" parent="Playfield/LaneLeft" unique_id=1572502280 instance=ExtResource("2_ys324")]
 direction = 3
@@ -56,12 +73,19 @@ target_position = Vector2(350, 500)
 
 [node name="LaneRight" type="Node2D" parent="Playfield" unique_id=848399786]
 
-[node name="Receptor" type="Sprite2D" parent="Playfield/LaneRight" unique_id=162711547]
+[node name="OffReceptor" type="Sprite2D" parent="Playfield/LaneRight" unique_id=162711547]
 top_level = true
-position = Vector2(800, 500)
+position = Vector2(800, 550)
 rotation = 1.5707964
-scale = Vector2(0.06, 0.06)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_wxi2m")
+script = ExtResource("7_i86ew")
+
+[node name="OnReceptor" type="Sprite2D" parent="Playfield/LaneRight" unique_id=1684498864]
+position = Vector2(800, 550)
+rotation = 1.5707964
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_ss7mm")
 
 [node name="Note" parent="Playfield/LaneRight" unique_id=1299138532 instance=ExtResource("2_ys324")]
 direction = 1
@@ -69,23 +93,36 @@ target_position = Vector2(800, 500)
 
 [node name="LaneUp" type="Node2D" parent="Playfield" unique_id=505571021]
 
-[node name="Receptor" type="Sprite2D" parent="Playfield/LaneUp" unique_id=1728134155]
+[node name="OffReceptor" type="Sprite2D" parent="Playfield/LaneUp" unique_id=1728134155]
 top_level = true
-position = Vector2(500, 500)
-scale = Vector2(0.06, 0.06)
+position = Vector2(500, 550)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_wxi2m")
+script = ExtResource("8_ymt2k")
+
+[node name="OnReceptor" type="Sprite2D" parent="Playfield/LaneUp" unique_id=25875147]
+position = Vector2(500, 550)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_ss7mm")
 
 [node name="Note" parent="Playfield/LaneUp" unique_id=1775389195 instance=ExtResource("2_ys324")]
 target_position = Vector2(500, 500)
 
 [node name="LaneDown" type="Node2D" parent="Playfield" unique_id=431077587]
 
-[node name="Receptor" type="Sprite2D" parent="Playfield/LaneDown" unique_id=716696448]
+[node name="OffReceptor" type="Sprite2D" parent="Playfield/LaneDown" unique_id=716696448]
 top_level = true
-position = Vector2(650, 500)
+position = Vector2(650, 550)
 rotation = 3.1415927
-scale = Vector2(0.06, 0.06)
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_wxi2m")
+script = ExtResource("9_gy7fg")
+
+[node name="OnReceptor" type="Sprite2D" parent="Playfield/LaneDown" unique_id=444301480]
+position = Vector2(650, 550)
+rotation = -3.1415925
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_ss7mm")
 
 [node name="Note" parent="Playfield/LaneDown" unique_id=1064172980 instance=ExtResource("2_ys324")]
 direction = 2
