@@ -1,13 +1,14 @@
 extends Node3D
 
-enum NodeType { START, COMBAT, ELITE, ITEM, SHOP, STORY, FINISH }
+enum NodeType { START, COMBAT, ELITE, ITEM, SHOP, UNKNOWN, FINISH }
 
 const MAX_ACTIVE_PATHS: int = 3
 const PATH_SHADER: Shader = preload("res://assets/map_scene/dotted_path.gdshader")
 const TOKEN_SCENE: PackedScene = preload("res://assets/map_scene/map_icons.glb")
+# unknown nodes reuse the question-mark mesh named story inside the imported model
 const TOKEN_NAMES: Array[StringName] = [&"story", &"combat", &"elite", &"item", &"shop", &"story", &"elite"]
 const ENCOUNTER_TYPES: Array[NodeType] = [
-	NodeType.COMBAT, NodeType.ELITE, NodeType.ITEM, NodeType.SHOP, NodeType.STORY
+	NodeType.COMBAT, NodeType.ELITE, NodeType.ITEM, NodeType.SHOP, NodeType.UNKNOWN
 ]
 
 @export_range(2, 100, 1) var node_count: int = 9 # number of rows, including endpoints.
@@ -141,7 +142,7 @@ func _create_row(row_index: int, row_count: int, width: int) -> Array[int]:
 		var point: Vector3 = Vector3(x, _token_base_height(x, z), z)
 		var node_type: NodeType = ENCOUNTER_TYPES[_random.randi_range(0, ENCOUNTER_TYPES.size() - 1)]
 		if row_index == 0:
-			node_type = NodeType.START
+			node_type = NodeType.COMBAT # the first encounter is always a normal battle
 		elif row_index == row_count - 1:
 			node_type = NodeType.FINISH
 		var node_id: int = map_nodes.size()

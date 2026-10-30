@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://bffhqb2ru384i" path="res://assets/map_scene/volcanic_ground.gdshader" id="1_vlip3"]
 [ext_resource type="Script" uid="uid://bw0ikd5f3oeue" path="res://scripts/map_path.gd" id="2_ne7uw"]
 [ext_resource type="Script" uid="uid://dnbgdi608x0i2" path="res://scripts/map_terrain.gd" id="3_terrain"]
+[ext_resource type="Script" uid="uid://c8kk6lqk4oe1x" path="res://scripts/map_interaction.gd" id="4_interaction"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vsh3c"]
 render_priority = 0
@@ -48,6 +49,7 @@ ssao_light_affect = 0.25
 
 [node name="MapScene" type="Node3D" unique_id=1994515897]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3841858e-07, 0)
+script = ExtResource("4_interaction")
 
 [node name="MapSurface" type="MeshInstance3D" parent="." unique_id=165163470]
 material_override = SubResource("ShaderMaterial_vsh3c")
