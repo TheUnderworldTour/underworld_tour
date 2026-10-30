@@ -19,6 +19,13 @@ func _ready() -> void:
 	_build_terrain()
 
 
+# keeps generated preview resources visible but excludes them from saved scenes
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "mesh" or property.name == "material_override":
+		# the terrain rebuilds these resources on load, so storing them duplicates data
+		property.usage = int(property.usage) & ~PROPERTY_USAGE_STORAGE
+
+
 # shared by the actual mesh, tokens and paths; no shader-only displacement.
 # interpolate the same triangle split used by _build_terrain.
 # returns the rendered surface height by interpolating the correct grid triangle
@@ -35,6 +42,7 @@ func get_height_at(x: float, z: float) -> float:
 	var b: float = _vertex_height(x0 + CELL_SIZE, z0)
 	var c: float = _vertex_height(x0, z0 + CELL_SIZE)
 	var d: float = _vertex_height(x0 + CELL_SIZE, z0 + CELL_SIZE)
+
 	# the diagonal separates the first triangle from the second triangle in this cell
 	if u + v <= 1.0:
 		return a + (b - a) * u + (c - a) * v
