@@ -4,9 +4,9 @@
 [ext_resource type="Script" uid="uid://bvq3quhl0rgwy" path="res://scripts/portrait.gd" id="2_w2ogu"]
 
 [node name="CharacterPortrait" type="Node2D" unique_id=113705700]
+script = ExtResource("2_w2ogu")
 
 [node name="Portrait" type="Sprite2D" parent="." unique_id=361212421]
 position = Vector2(297, 268)
 scale = Vector2(0.4935185, 0.49351853)
 texture = ExtResource("1_dd7fl")
-script = ExtResource("2_w2ogu")
