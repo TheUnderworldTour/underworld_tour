@@ -21,14 +21,14 @@ signal missed
 ## target beat counts as a hit.
 @export var hit_window := 0.15
 
-## Where the note should be when the player strikes it.
-@export var target_position := Vector2(640, 360)
-
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
 var _travel_time: float = 2.4
 var _has_been_hit := false
 var _off_screen_position: Vector2
+## Where the note should be when the player strikes it; always assigned
+## by the spawner (rhythm_core.gd) before the note enters the tree.
+var target_position: Vector2
 
 @onready var _arrow: Sprite2D = $Arrow
 
@@ -44,10 +44,17 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	# Check to make sure we should actually show notes
 	if _has_been_hit or _conductor == null:
 		return
+	if not _conductor.is_song_running():
+		return
 	var target_time := target_beat * _sec_per_beat
-	var progress := clampf((_conductor.song_position - (target_time - _travel_time)) / _travel_time, 0.0, 1.0)
+	var spawn_time := target_time - _travel_time
+	if _conductor.song_position < spawn_time:
+		return
+	
+	var progress := clampf((_conductor.song_position - spawn_time) / _travel_time, 0.0, 1.0)
 	position = _off_screen_position.lerp(target_position, progress)
 	if progress >= 1.0:
 		_check_miss()

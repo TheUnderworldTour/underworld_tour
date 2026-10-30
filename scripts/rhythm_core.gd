@@ -18,14 +18,15 @@ var _notes: Array[Note] = []
 @onready var _score_label: Label = $HUD/ScoreLabel
 @onready var _combo_label: Label = $HUD/ComboLabel
 @onready var _receptors: Array[Dictionary] = [
-	{"direction": 0, "position": Vector2(500, 500)},
-	{"direction": 1, "position": Vector2(800, 500)},
-	{"direction": 2, "position": Vector2(650, 500)},
-	{"direction": 3, "position": Vector2(350, 500)},
+	{"direction": 0, "position": Vector2(500, 550)},
+	{"direction": 1, "position": Vector2(800, 550)},
+	{"direction": 2, "position": Vector2(650, 550)},
+	{"direction": 3, "position": Vector2(350, 550)},
 ]
 
 
 func _ready() -> void:
+	# This will hopefully be replaced by a .json file in the future
 	chart = [
 		Vector2i(4, 0), Vector2i(6, 1), Vector2i(8, 2), Vector2i(10, 3),
 		Vector2i(12, 0), Vector2i(12, 1), Vector2i(14, 2), Vector2i(16, 3),

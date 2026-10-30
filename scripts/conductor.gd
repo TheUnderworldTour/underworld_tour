@@ -9,7 +9,7 @@ signal beat(position: int)
 signal measure(position: int)
 
 ## Tempo of the song in beats per minute.
-@export var bpm := 100
+@export var bpm := 240
 
 ## Number of measures per repetition of the song's rhythm pattern.
 @export var measures := 4
@@ -121,3 +121,6 @@ func _on_start_timer_timeout() -> void:
 		start_timer.stop()
 		_use_fallback_clock = stream == null
 	_report_beat()
+	
+func is_song_running() -> bool:
+	return playing or _use_fallback_clock
