@@ -48,7 +48,7 @@ func set_state(state: String, duration: float = 1.5) -> void:
 
 func _input(event: InputEvent):
 	if event.is_action_pressed("Test_char_0"):
-		set_state("idle")
+		set_state("idle_1")
 	elif event.is_action_pressed("Test_char_1"):
 		set_state("play_1")
 	elif event.is_action_pressed("Test_char_2"):
