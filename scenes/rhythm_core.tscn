@@ -3,11 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://bkx5l6r8f0f7e" path="res://scenes/conductor.tscn" id="1_7cdm0"]
 [ext_resource type="Texture2D" uid="uid://byeal44hvg06e" path="res://assets/arrow_off.png" id="2_wxi2m"]
 [ext_resource type="Script" uid="uid://ctsbp3acugwtu" path="res://scripts/rhythm_core.gd" id="3_core"]
+[ext_resource type="Texture2D" uid="uid://d0iyx4dltn2qa" path="res://assets/backgrounds/bg1.png" id="3_lmn3w"]
 [ext_resource type="Script" uid="uid://ctj0ln4i5xbm3" path="res://scripts/receptors/left_off_receptor.gd" id="4_lq8vt"]
 [ext_resource type="Texture2D" uid="uid://ccpe61essrjh6" path="res://assets/arrow_on.png" id="5_ss7mm"]
 [ext_resource type="Script" uid="uid://cerk2h0vx1idx" path="res://scripts/receptors/right_off_receptor.gd" id="7_i86ew"]
 [ext_resource type="Script" uid="uid://ctngp3tamfv8t" path="res://scripts/receptors/up_off_receptor.gd" id="8_ymt2k"]
 [ext_resource type="Script" uid="uid://ckw2ryorju3rm" path="res://scripts/receptors/down_off_receptor.gd" id="9_gy7fg"]
+[ext_resource type="PackedScene" uid="uid://c5m10mnof5x6c" path="res://scenes/character_portrait.tscn" id="9_lmn3w"]
 
 [sub_resource type="GDScript" id="GDScript_i86ew"]
 script/source = "extends Node2D
@@ -18,10 +20,10 @@ script = ExtResource("3_core")
 
 [node name="Conductor" parent="." unique_id=218649454 instance=ExtResource("1_7cdm0")]
 
-[node name="Background" type="ColorRect" parent="." unique_id=654271884]
-offset_right = 1156.0
-offset_bottom = 651.0
-color = Color(0.043137256, 0.35686275, 0.83137256, 1)
+[node name="Background" type="Sprite2D" parent="." unique_id=717183974]
+position = Vector2(576, 324)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_lmn3w")
 
 [node name="HUD" type="Control" parent="." unique_id=1750091761]
 layout_mode = 3
@@ -111,3 +113,6 @@ position = Vector2(650, 550)
 rotation = -3.1415925
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_ss7mm")
+
+[node name="CharacterPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
+position = Vector2(-119, 178)

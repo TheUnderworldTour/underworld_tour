@@ -24,7 +24,7 @@ func _ready() -> void:
 func set_bpm(new_bpm: int)-> void:
 	bpm = new_bpm
 
-func set_state(state: String, duration: float = 1.5) -> void:
+func set_state(state: String, duration: float = 0.5) -> void:
 	if not portraits.has(state):
 		return
 	
@@ -58,7 +58,7 @@ func _input(event: InputEvent):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	idle_timer+=delta
-	var beat_interval = 120.0 / max(bpm,1)
+	var beat_interval = 60.0 / max(bpm,1)
 	
 	if idle_timer >= beat_interval:
 		idle_timer -= beat_interval
