@@ -53,7 +53,7 @@ func _physics_process(_delta: float) -> void:
 	var spawn_time := target_time - _travel_time
 	if _conductor.song_position < spawn_time:
 		return
-	
+	4
 	
 	var progress := clampf((_conductor.song_position - spawn_time) / _travel_time, 0.0, 1.0)
 	position = _off_screen_position.lerp(target_position, progress)
