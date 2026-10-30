@@ -1,6 +1,7 @@
-extends Sprite2D
+class_name CharacterPortrait
+extends Node2D
 
-@onready var portrait: Sprite2D = self
+@onready var portrait: Sprite2D = $Portrait
 
 var portraits = {
 	"idle_1": preload("res://assets/character_portraits/guitarist/guitarist_idle_1.png"	),
@@ -9,6 +10,20 @@ var portraits = {
 	"play_2": preload("res://assets/character_portraits/guitarist/guitarist_play_2.png"),
 	"bad_1": preload("res://assets/character_portraits/guitarist/guitarist_bad_1.png")
 }
+
+var idle_portraits = [
+	"idle_1",
+	"idle_2"
+]
+
+var good_portraits = [
+	"play_1",
+	"play_2"
+]
+
+var bad_portraits = [
+	"bad_1"
+]
 
 var state_version:=0
 var curr_state:="idle_1"
@@ -19,6 +34,7 @@ var idle_frame:=1
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	randomize()
 	pass # Replace with function body.
 
 func set_bpm(new_bpm: int)-> void:
@@ -35,9 +51,9 @@ func set_state(state: String, duration: float = 0.5) -> void:
 	
 	portrait.texture = portraits[state]
 	
-	if state == "idle_1":
+	if state in idle_portraits:
 		idle_timer = 0
-		idle_frame = int(state.get_slice("_", 1))
+		idle_frame = idle_portraits.find(state)
 		return
 	
 	await get_tree().create_timer(duration).timeout
@@ -46,14 +62,17 @@ func set_state(state: String, duration: float = 0.5) -> void:
 		curr_state = "idle_1"
 		portrait.texture = portraits["idle_1"]
 
-func _input(event: InputEvent):
-	if event.is_action_pressed("Test_char_0"):
-		set_state("idle_1")
-	elif event.is_action_pressed("Test_char_1"):
-		set_state("play_1")
-	elif event.is_action_pressed("Test_char_2"):
-		set_state("play_2")
-	return
+func play_good() -> void:
+	var idx = randi() % good_portraits.size()
+	var state = good_portraits[idx]
+	set_state(state)
+	pass
+
+func play_bad() -> void:
+	var idx = randi() % bad_portraits.size()
+	var state = bad_portraits[idx]
+	set_state(state)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -62,6 +81,6 @@ func _process(delta: float) -> void:
 	
 	if idle_timer >= beat_interval:
 		idle_timer -= beat_interval
-		if curr_state == "idle_1" or curr_state == "idle_2":
-			idle_frame = 2 if idle_frame == 1 else 1
-			set_state("idle_" + str(idle_frame))
+		if curr_state in  idle_portraits:
+			idle_frame = (idle_frame + 1) % idle_portraits.size()
+			set_state(idle_portraits[idle_frame])
