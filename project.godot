@@ -15,10 +15,6 @@ run/main_scene="res://scenes/rhythm_core.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
-[debug]
-
-gdscript/warnings/enable=false
-
 [display]
 
 window/stretch/mode="canvas_items"
