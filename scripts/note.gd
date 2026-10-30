@@ -21,14 +21,14 @@ signal missed
 ## target beat counts as a hit.
 @export var hit_window := 0.15
 
-## Where the note should be when the player strikes it.
-@export var target_position := Vector2(640, 550) # old = 360
-
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
 var _travel_time: float = 2.4
 var _has_been_hit := false
 var _off_screen_position: Vector2
+## Where the note should be when the player strikes it; always assigned
+## by the spawner (rhythm_core.gd) before the note enters the tree.
+var target_position: Vector2
 
 @onready var _arrow: Sprite2D = $Arrow
 
