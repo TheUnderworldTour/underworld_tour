@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cvgg8k52gmaso"]
+
+[ext_resource type="Texture2D" uid="uid://b3g2fvgw0e1ud" path="res://icons.svg" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://o00mg4ww27ao" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://qebtdkk7p0rn" path="res://canvas_layer.tscn" id="2_h2yge"]
+
+[node name="Main" type="Node2D" unique_id=300537125]
+script = ExtResource("1_ig7tw")
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=1618267826]
+position = Vector2(580, 292)
+texture = ExtResource("1_0xm2m")
+
+[node name="CanvasLayer" parent="." unique_id=688787322 instance=ExtResource("2_h2yge")]
+process_mode = 2
