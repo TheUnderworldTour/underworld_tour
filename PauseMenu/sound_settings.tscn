@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://x3t1b1d7t2kc"]
+
+[node name="Sound_settings" type="CanvasLayer" unique_id=1109089315]
+
+[node name="Control" type="Control" parent="." unique_id=1475130892]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="." unique_id=1890386126]
+offset_left = 1.0
+offset_top = 4.0
+offset_right = 1071.0
+offset_bottom = 593.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=559427245]
+offset_left = 444.0
+offset_top = 225.0
+offset_right = 618.0
+offset_bottom = 340.0
+
+[node name="Game Paused" type="Label" parent="VBoxContainer" unique_id=1925351546]
+layout_mode = 2
+text = "Game Paused"
+horizontal_alignment = 1
+
+[node name="Sound settings" type="Label" parent="VBoxContainer" unique_id=300255998]
+layout_mode = 2
+text = "Sound Settings"
+horizontal_alignment = 1
+
+[node name="Gameplay volume" type="Button" parent="VBoxContainer" unique_id=1331250573]
+layout_mode = 2
+text = "Gameplay Volume"
+
+[node name="Sound Effects" type="Button" parent="VBoxContainer" unique_id=1411082645]
+layout_mode = 2
+text = "Sound Effects"

@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dg4eqt005vigu"]
+
+[node name="Gameplay_settings" type="CanvasLayer" unique_id=868042882]
+
+[node name="Control" type="Control" parent="." unique_id=722589168]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="." unique_id=1947765587]
+offset_right = 1153.0
+offset_bottom = 648.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=415592388]
+offset_left = 405.0
+offset_top = 200.0
+offset_right = 651.0
+offset_bottom = 400.0
+
+[node name="Game Paused" type="Label" parent="VBoxContainer" unique_id=1230427870]
+layout_mode = 2
+text = "Game Paused"
+horizontal_alignment = 1
+
+[node name="Gameplay Settings" type="Label" parent="VBoxContainer" unique_id=843026508]
+layout_mode = 2
+text = "Gameplay Settings"
+horizontal_alignment = 1
+
+[node name="Difficulty Level" type="Button" parent="VBoxContainer" unique_id=310573408]
+layout_mode = 2
+text = "Difficulty Level"
+
+[node name="Key Bindings" type="Button" parent="VBoxContainer" unique_id=982811359]
+layout_mode = 2
+text = "Key Bindings"
+
+[node name="BPM Options" type="Button" parent="VBoxContainer" unique_id=466272680]
+layout_mode = 2
+text = "BPM Options"
