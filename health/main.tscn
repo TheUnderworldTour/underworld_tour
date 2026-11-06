@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://d0hf0pj5a3jua"]
+
+[ext_resource type="Texture2D" uid="uid://du4us14i6y7yc" path="res://icon.svg" id="1_ig7tw"]
+
+[node name="Main" type="Node2D" unique_id=1937205910]
+
+[node name="icon" type="Sprite2D" parent="." unique_id=464675453]
+position = Vector2(536, 258)
+texture = ExtResource("1_ig7tw")
+
+[node name="HealthLabel" type="Label" parent="." unique_id=534969698]
+offset_left = 485.0
+offset_top = 136.0
+offset_right = 579.0
+offset_bottom = 159.0
+text = "Health: 10"
+horizontal_alignment = 1
+justification_flags = 35
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=540901676]
+offset_left = 443.0
+offset_top = 162.0
+offset_right = 632.0
+offset_bottom = 189.0
+max_value = 10.0
+step = 1.0
+value = 10.0
