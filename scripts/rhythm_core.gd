@@ -21,6 +21,7 @@ var _notes: Array[Note] = []
 	{"direction": 3, "position": Vector2(350, 550)},
 ]
 
+@onready var character_portrait: CharacterPortrait = $CharacterPortrait
 
 func _ready() -> void:
 	# This will hopefully be replaced by a .json file in the future
@@ -87,11 +88,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_note_hit(accuracy: float, note: Note) -> void:
 	_judge.judge_note_hit(note, accuracy)
+  character_portrait.play_good()
 
 
 func _on_note_missed(note: Note) -> void:
 	_judge.judge_note_miss(note)
 	_prune_despawned_notes()
+  character_portrait.play_bad()
 
 
 func _on_note_hold_completed(release_accuracy: float, note: Note) -> void:
