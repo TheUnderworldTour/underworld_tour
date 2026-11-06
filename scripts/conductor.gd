@@ -9,10 +9,10 @@ signal beat(position: int)
 signal measure(position: int)
 
 ## Tempo of the song in beats per minute.
-@export var bpm := 240
+@export var bpm := 195
 
 ## Number of measures per repetition of the song's rhythm pattern.
-@export var measures := 4
+@export var measures := 117
 
 ## Playback position of the song in seconds, corrected for audio latency.
 var song_position: float = 0.0
@@ -27,7 +27,7 @@ var sec_per_beat: float = 60.0 / bpm
 var last_reported_beat: int = 0
 
 ## Number of count-in beats played by the timer before the audio starts.
-var beats_before_start: int = 0
+var beats_before_start: int = 4
 
 ## Enables the wall-clock fallback after the count-in when no audio stream
 ## is assigned, so gameplay still works while testing without audio.
