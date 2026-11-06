@@ -1,3 +1,4 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+/docs/images/context_diagram.png.import
