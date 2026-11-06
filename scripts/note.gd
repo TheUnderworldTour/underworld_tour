@@ -1,6 +1,8 @@
 class_name Note
 extends Area2D
 
+const ItemDefinition = preload("res://scripts/items/item_definition.gd")
+
 ## Emitted when the player hits the note. `accuracy` is the absolute time
 ## in seconds between the input and the note's target beat.
 signal hit(accuracy: float)
@@ -61,7 +63,7 @@ func _physics_process(_delta: float) -> void:
 
 
 func can_hit() -> bool:
-	return not _has_been_hit and _get_accuracy() <= hit_window
+	return not _has_been_hit and _get_accuracy() <= _effective_hit_window()
 
 
 func get_accuracy() -> float:
@@ -77,7 +79,7 @@ func hit_note() -> void:
 
 
 func is_in_window() -> bool:
-	return _get_accuracy() <= hit_window
+	return _get_accuracy() <= _effective_hit_window()
 
 
 func _get_accuracy() -> float:
@@ -86,7 +88,7 @@ func _get_accuracy() -> float:
 
 
 func _check_miss() -> void:
-	if _get_accuracy() > hit_window:
+	if _get_accuracy() > _effective_hit_window():
 		_has_been_hit = true
 		missed.emit()
 		_despawn()
@@ -98,3 +100,10 @@ func _get_spawn_position() -> Vector2:
 
 func _despawn() -> void:
 	queue_free()
+
+# uses the same bounded window for input, receptor feedback and expiry
+func _effective_hit_window() -> float:
+	return clampf(
+		ItemInventory.get_modified_stat(ItemDefinition.Stat.HIT_WINDOW, hit_window),
+		0.0, maxf(hit_window, 0.20)
+	)
