@@ -41,7 +41,7 @@ func _ready() -> void:
 # Updates internal BPM
 func set_bpm(new_bpm: int)-> void:
 	bpm = new_bpm
-	state_timer = ( 60.0/bpm ) * 0.5
+	state_timer = ( 60.0/bpm ) * 0.25
 
 # Updates current image texture
 func set_state(state: String, duration: float = 0.5) -> void:
@@ -87,7 +87,7 @@ func play_bad() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	idle_timer+=delta
-	var beat_interval = 60.0 / max(bpm,1)
+	var beat_interval = state_timer * 4
 	
 	if idle_timer >= beat_interval:
 		idle_timer -= beat_interval
