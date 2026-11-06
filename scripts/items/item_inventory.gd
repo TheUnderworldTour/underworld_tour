@@ -5,13 +5,16 @@ signal inventory_changed
 const ItemDefinition = preload("res://scripts/items/item_definition.gd")
 const DAMAGE_BOOST: ItemDefinition = preload("res://assets/items/damage_boost.tres")
 
+const TIMING_EXAMPLE: ItemDefinition = preload("res://assets/items/timing_example.tres")
+
 var _items: Dictionary[StringName, ItemDefinition] = {}
 var _quantities: Dictionary[StringName, int] = {}
 
 
-# seeds the session with one example item so battle damage exercises the framework
+# seeds the session with two example items for the battle inventory
 func _ready() -> void:
 	add_item(DAMAGE_BOOST)
+	add_item(TIMING_EXAMPLE)
 
 
 # adds copies of a definition and keeps each id tied to one resource

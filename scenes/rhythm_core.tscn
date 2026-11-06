@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://b078noinj5olf"]
 
+[ext_resource type="Script" path="res://scripts/items/battle_inventory_menu.gd" id="100_inventory"]
+
 [ext_resource type="PackedScene" uid="uid://bkx5l6r8f0f7e" path="res://scenes/conductor.tscn" id="1_7cdm0"]
 [ext_resource type="Texture2D" uid="uid://byeal44hvg06e" path="res://assets/arrow_off.png" id="2_wxi2m"]
 [ext_resource type="Script" uid="uid://ctsbp3acugwtu" path="res://scripts/rhythm_core.gd" id="3_core"]
@@ -116,3 +118,6 @@ texture = ExtResource("5_ss7mm")
 
 [node name="CharacterPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
 position = Vector2(-119, 178)
+
+[node name="BattleInventory" type="CanvasLayer" parent="."]
+script = ExtResource("100_inventory")

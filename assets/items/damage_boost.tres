@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1")
 id = &"damage_boost"
-display_name = "Damage Boost"
+display_name = "Item 1"
 description = "Deals 25% more damage on successful hits."
 percent_bonus = 25.0
