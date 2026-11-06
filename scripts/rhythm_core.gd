@@ -24,6 +24,7 @@ var _notes: Array[Note] = []
 	{"direction": 3, "position": Vector2(350, 550)},
 ]
 
+@onready var character_portrait: CharacterPortrait = $CharacterPortrait
 
 func _ready() -> void:
 	# This will hopefully be replaced by a .json file in the future
@@ -86,11 +87,13 @@ func _on_note_hit(accuracy: float) -> void:
 	_combo += 1
 	_score += PERFECT_SCORE if accuracy <= PERFECT_WINDOW else GOOD_SCORE
 	_update_hud()
+	character_portrait.play_good()
 
 
 func _on_note_missed() -> void:
 	_combo = 0
 	_update_hud()
+	character_portrait.play_bad()
 	for i in range(_notes.size() - 1, -1, -1):
 		if not is_instance_valid(_notes[i]):
 			_notes.remove_at(i)
