@@ -5,6 +5,14 @@ extends Area2D
 ## in seconds between the input and the note's target beat.
 signal hit(accuracy: float)
 
+## Emitted when a long note's hold runs to completion with the key held.
+## `release_accuracy` is the absolute seconds the release lands from the
+## hold's end beat (INF if the hold auto-completed while still held).
+signal hold_completed(release_accuracy: float)
+
+## Emitted when a long note's hold is dropped before its end beat.
+signal hold_broken
+
 ## Emitted when the note's hit window passes without input.
 signal missed
 
@@ -66,6 +74,13 @@ func can_hit() -> bool:
 
 func get_accuracy() -> float:
 	return _get_accuracy()
+
+
+## Signed time in seconds between the song clock and the note's target
+## beat. Positive means the player input (or the clock) is late.
+func get_time_error() -> float:
+	var target_time: float = target_beat * _sec_per_beat
+	return _conductor.song_position - target_time
 
 
 func hit_note() -> void:

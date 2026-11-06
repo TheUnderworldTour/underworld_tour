@@ -28,6 +28,7 @@ project/assembly_name="underworld_tour"
 
 folder_colors={
 "res://assets/": "red",
+"res://docs/": "purple",
 "res://scenes/": "blue",
 "res://scripts/": "green"
 }
