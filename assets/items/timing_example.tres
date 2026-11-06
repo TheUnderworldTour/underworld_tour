@@ -1,0 +1,11 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"timing_example"
+display_name = "Item 2"
+description = "Widens the hit window by 5 ms."
+stat = 3
+flat_bonus = 0.005
