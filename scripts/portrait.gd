@@ -29,7 +29,7 @@ var state_version:=0
 var curr_state:="idle_1"
 
 var bpm:=240
-var state_timer = max(0.25, 0.5/bpm)
+var state_timer = ( 60.0/bpm ) * 0.25
 var idle_timer:= 0.0
 var idle_frame:=1
 
@@ -41,9 +41,10 @@ func _ready() -> void:
 # Updates internal BPM
 func set_bpm(new_bpm: int)-> void:
 	bpm = new_bpm
+	state_timer = ( 60.0/bpm ) * 0.5
 
 # Updates current image texture
-func set_state(state: String, duration: float = state_timer) -> void:
+func set_state(state: String, duration: float = 0.5) -> void:
 	if not portraits.has(state):
 		return
 	
@@ -59,7 +60,9 @@ func set_state(state: String, duration: float = state_timer) -> void:
 		idle_frame = idle_portraits.find(state)
 		return
 	
-	await get_tree().create_timer(duration).timeout
+	var actual_duration = duration if duration !=0.25 else state_timer
+	
+	await get_tree().create_timer(actual_duration).timeout
 	
 	if current_version == state_version:
 		curr_state = "idle_1"
