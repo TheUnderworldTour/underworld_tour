@@ -21,7 +21,7 @@ var _notes: Array[Note] = []
 	{"direction": 3, "position": Vector2(350, 550)},
 ]
 
-@onready var character_portrait: CharacterPortrait = $CharacterPortrait
+@onready var character_portrait: CharacterPortrait = $GuitaristPortrait
 
 func _ready() -> void:
 	# This will hopefully be replaced by a .json file in the future

@@ -52,14 +52,13 @@ offset_right = 84.0
 offset_bottom = 108.0
 text = "Combo: 0"
 
-[node name="JudgementLabel" type="Label" parent="HUD"]
+[node name="JudgementLabel" type="Label" parent="HUD" unique_id=618535285]
 top_level = true
 layout_mode = 0
 offset_left = 240.0
 offset_top = 300.0
 offset_right = 400.0
 offset_bottom = 323.0
-text = ""
 
 [node name="Playfield" type="Node2D" parent="." unique_id=939433344]
 
@@ -126,5 +125,5 @@ rotation = -3.1415925
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_ss7mm")
 
-[node name="CharacterPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
+[node name="GuitaristPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
 position = Vector2(-119, 178)
