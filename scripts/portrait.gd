@@ -2,8 +2,17 @@ class_name CharacterPortrait
 extends Node2D
 
 @onready var portrait: Node2D = $Portrait
-@export_dir var portrait_folder: String = "res://assets/character_portraits/guitarist/"
-@export var character_name: String = "guitarist"
+
+const PORTRAIT_ROOT :="res://assets/character_portraits/"
+@export var character_name: String = "guitarist":
+	set(value):
+		character_name = value
+		if is_node_ready():
+			_reload()
+# Derived, functions with updates
+var portrait_folder: String:
+	get:
+		return PORTRAIT_ROOT + character_name + "/"
 
 # Portrait lists to pick from
 var idle_portraits: Array[Texture2D] = []
@@ -20,7 +29,7 @@ var state_timer = ( 60.0/bpm ) * 0.25
 # Idle tracker
 var idle_timer:= 0.0
 var idle_frame:=1
-# hold note tracker
+# Hold note tracker
 @export var hold_frame_time = 0.0
 var holding := false
 var hold_timer := 0.0
@@ -63,6 +72,16 @@ func _load_portraits() -> void:
 		elif "_bad_" in base:
 			bad_portraits.append(texture)
 
+# Reload portrait to update changes
+func _reload()-> void:
+	holding = false
+	state_version += 1
+	idle_timer = 0.0
+	idle_frame = 0
+	_load_portraits()
+	if idle_portraits.size() > 0:
+		_show(idle_portraits[0])
+
 # Updates internal BPM
 func set_bpm(new_bpm: int)-> void:
 	bpm = new_bpm
@@ -79,22 +98,22 @@ func _is_idle(texture: Texture2D) -> bool:
 
 # Updates current image texture
 func set_state(texture: Texture2D, duration: float = 0.5) -> void:
-	if texture == null:
+	if texture == null or holding: # invalid texture or in hold state
 		return
 	
 	state_version+=1
 	var current_version := state_version
-	_show(texture)
+	_show(texture) # display texture
 	
-	if _is_idle(texture):
+	if _is_idle(texture): # reset idle timer and begin idle animation
 		idle_timer = 0.0
 		idle_frame = idle_portraits.find(texture)
 		return
 	
 	var actual_duration = duration if duration != 0.25 else state_timer
-	await get_tree().create_timer(actual_duration).timeout
+	await get_tree().create_timer(actual_duration).timeout # set timer
 	
-	if current_version == state_version and idle_portraits.size() > 0:
+	if current_version == state_version and idle_portraits.size() > 0: # return to idle animation
 		_show(idle_portraits[0])
 
 # grab a random image from the passed pool
@@ -116,7 +135,14 @@ func play_good() -> void:
 
 # Play a random bad emote
 func play_bad() -> void:
-	set_state(_pick_random(bad_portraits))
+	var texture := _pick_random(bad_portraits)
+	if texture == null:
+		return
+	if holding: # if bad note played during hold
+		_show(texture)
+		hold_timer = 0.0
+		return
+	set_state(texture)
 
 # begin looped playing during a hold note
 func start_hold()->void:
@@ -149,14 +175,14 @@ func set_holding(value: bool)-> void:
 
 # update the frames for hold notes
 func _update_hold(delta: float)->void:
-	if good_portraits.size() < 2:
+	if good_portraits.size() < 2: # only 1 portrait to bounce between
 		return
 	hold_timer += delta
 	var interval = hold_frame_time if hold_frame_time > 0.0 else state_timer *4
 	if hold_timer >= interval:
 		hold_timer -= interval
 		hold_frame = (hold_frame + 1) % good_portraits.size()
-		set_state(good_portraits[hold_frame])
+		_show(good_portraits[hold_frame])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -175,8 +201,3 @@ func _process(delta: float) -> void:
 		if _is_idle(current_texture):
 			idle_frame = (idle_frame + 1) % idle_portraits.size()
 			set_state(idle_portraits[idle_frame])
-
-# Constructor
-func _init(character: String = "guitarist"):
-	character_name = character
-	portrait_folder = "res://assets/character_portraits/" + character_name + "/"
