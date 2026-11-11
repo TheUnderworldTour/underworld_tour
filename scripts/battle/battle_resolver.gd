@@ -26,17 +26,11 @@ func resolve_judgment(
 func resolve_rhythm_penalty(penalty: RhythmPenalty, state: BattleState) -> void:
 	if penalty == null or state.outcome != BattleState.Outcome.ACTIVE:
 		return
-	resolve_boss_attack(penalty.damage, state)
-	if state.outcome == BattleState.Outcome.ACTIVE:
-		state.add_player_status(penalty.status_id)
-
-
-func resolve_boss_attack(damage: float, state: BattleState) -> void:
-	if state.outcome != BattleState.Outcome.ACTIVE:
-		return
-	state.player_health = maxf(0.0, state.player_health - maxf(0.0, damage))
+	state.player_health = maxf(0.0, state.player_health - maxf(0.0, penalty.damage))
 	if state.player_health == 0.0:
 		state.outcome = BattleState.Outcome.DEFEAT
+	else:
+		state.add_player_status(penalty.status_id)
 
 
 func finish_chart(state: BattleState) -> void:

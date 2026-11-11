@@ -3,7 +3,6 @@ extends Node2D
 
 signal note_judged(event: RhythmJudgment)
 signal extra_note_played(lane: int, song_time_sec: float)
-signal song_beat_reached(beat: int)
 signal chart_completed
 
 const NOTE_SCENE := preload("res://scenes/note.tscn")
@@ -84,10 +83,6 @@ func stop_chart() -> void:
 
 
 func _on_conductor_beat(position: int) -> void:
-	if _chart_stopped:
-		return
-	if _conductor.is_song_running():
-		song_beat_reached.emit(position - _conductor.beats_before_start)
 	if _chart_stopped:
 		return
 	while _next_note < chart.size() and chart[_next_note].x - _conductor.beats_before_start <= position:

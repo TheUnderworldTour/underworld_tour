@@ -3,8 +3,6 @@ extends Node2D
 const ENCOUNTER_ID: StringName = &"demo_boss"
 const PLAYER_HEALTH: float = 100.0
 const BOSS_HEALTH: float = 55.0
-const BOSS_ATTACK_DAMAGE: float = 35.0
-const BOSS_ATTACK_BEATS: Array[int] = [3, 7, 11]
 
 @export_group("Boss Rhythm Penalties")
 @export var missed_note_penalty: RhythmPenalty
@@ -18,14 +16,12 @@ const BOSS_ATTACK_BEATS: Array[int] = [3, 7, 11]
 
 var _state: BattleState
 var _resolver: BattleResolver = BattleResolver.new()
-var _next_boss_attack: int = 0
 
 
 func _ready() -> void:
 	_state = BattleState.new(PLAYER_HEALTH, BOSS_HEALTH, GameState.get_battle_loadout())
 	_rhythm_core.note_judged.connect(_on_rhythm_core_note_judged)
 	_rhythm_core.extra_note_played.connect(_on_rhythm_core_extra_note_played)
-	_rhythm_core.song_beat_reached.connect(_on_rhythm_core_song_beat_reached)
 	_rhythm_core.chart_completed.connect(_on_rhythm_core_chart_completed)
 	_retry_button.pressed.connect(_on_retry_button_pressed)
 	_refresh_health()
@@ -38,16 +34,6 @@ func _on_rhythm_core_note_judged(event: RhythmJudgment) -> void:
 
 func _on_rhythm_core_extra_note_played(_lane: int, _song_time_sec: float) -> void:
 	_resolver.resolve_rhythm_penalty(extra_note_penalty, _state)
-	_publish_state()
-
-
-func _on_rhythm_core_song_beat_reached(beat: int) -> void:
-	while (
-		_next_boss_attack < BOSS_ATTACK_BEATS.size()
-		and BOSS_ATTACK_BEATS[_next_boss_attack] <= beat
-	):
-		_next_boss_attack += 1
-		_resolver.resolve_boss_attack(BOSS_ATTACK_DAMAGE, _state)
 	_publish_state()
 
 
