@@ -2,6 +2,7 @@ class_name RhythmCore
 extends Node2D
 
 signal note_judged(event: RhythmJudgment)
+signal extra_note_played(lane: int, song_time_sec: float)
 signal song_beat_reached(beat: int)
 signal chart_completed
 
@@ -72,6 +73,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			best_accuracy = accuracy
 	if best != null:
 		best.hit_note()
+	elif _conductor.is_song_running():
+		extra_note_played.emit(direction, _conductor.song_position)
 
 
 func stop_chart() -> void:
