@@ -129,6 +129,11 @@ texture = ExtResource("5_ss7mm")
 [node name="GuitaristPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
 position = Vector2(192, 461)
 
+[node name="BassistPortrait" parent="." unique_id=1348098528 instance=ExtResource("9_lmn3w")]
+position = Vector2(1013, 488)
+scale = Vector2(0.72, 0.72)
+character_name = "bassist"
+
 [node name="EnemyPortrait1" parent="." unique_id=720802032 instance=ExtResource("9_lmn3w")]
 position = Vector2(571, 233.00002)
 scale = Vector2(0.75, 0.75)
