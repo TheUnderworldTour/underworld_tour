@@ -3,7 +3,9 @@ extends Node2D
 
 @onready var portrait: Node2D = $Portrait
 
-const PORTRAIT_ROOT :="res://assets/character_portraits/"
+func _get_portrait_root()-> String: # a function so sub classes can override
+	return "res://assets/character_portraits/"
+
 @export var character_name: String = "guitarist":
 	set(value):
 		character_name = value
@@ -12,7 +14,7 @@ const PORTRAIT_ROOT :="res://assets/character_portraits/"
 # Derived, functions with updates
 var portrait_folder: String:
 	get:
-		return PORTRAIT_ROOT + character_name + "/"
+		return _get_portrait_root() + character_name + "/"
 
 # Portrait lists to pick from
 var idle_portraits: Array[Texture2D] = []
