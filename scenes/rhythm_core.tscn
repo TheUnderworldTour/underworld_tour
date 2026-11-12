@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://ctngp3tamfv8t" path="res://scripts/receptors/up_off_receptor.gd" id="8_ymt2k"]
 [ext_resource type="Script" uid="uid://ckw2ryorju3rm" path="res://scripts/receptors/down_off_receptor.gd" id="9_gy7fg"]
 [ext_resource type="PackedScene" uid="uid://c5m10mnof5x6c" path="res://scenes/character_portrait.tscn" id="9_lmn3w"]
+[ext_resource type="Script" uid="uid://b6kmonsvth3b7" path="res://scripts/enemy_portrait.gd" id="12_u0hd3"]
 
 [sub_resource type="GDScript" id="GDScript_i86ew"]
 script/source = "extends Node2D
@@ -126,4 +127,10 @@ scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_ss7mm")
 
 [node name="GuitaristPortrait" parent="." unique_id=113705700 instance=ExtResource("9_lmn3w")]
-position = Vector2(-119, 178)
+position = Vector2(192, 461)
+
+[node name="EnemyPortrait1" parent="." unique_id=720802032 instance=ExtResource("9_lmn3w")]
+position = Vector2(571, 233.00002)
+scale = Vector2(0.75, 0.75)
+script = ExtResource("12_u0hd3")
+character_name = "skeleton1"
