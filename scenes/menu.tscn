@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://k8udltb2jxs3"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=43116417]
+
+[node name="pause_menu" type="Control" parent="." unique_id=80765497]
+process_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1150.0
+offset_bottom = 644.0
+
+[node name="Panel" type="Panel" parent="pause_menu" unique_id=118958664]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -574.0
+offset_top = -322.0
+offset_right = 579.0
+offset_bottom = 325.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FirstButtons" type="VBoxContainer" parent="pause_menu" unique_id=94075082]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -113.0
+offset_top = -74.0
+offset_right = 113.0
+offset_bottom = 74.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Pause" type="Label" parent="pause_menu/FirstButtons" unique_id=1838642554]
+layout_mode = 2
+text = "Pause Menu"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="pause_menu/FirstButtons" unique_id=625854355]
+layout_mode = 2
+text = "Resume"
+
+[node name="Settings" type="Button" parent="pause_menu/FirstButtons" unique_id=1752864903]
+layout_mode = 2
+text = "Settings"
+
+[node name="Quit" type="Button" parent="pause_menu/FirstButtons" unique_id=1742021122]
+layout_mode = 2
+text = "Quit"
+
+[node name="Settings" type="Panel" parent="pause_menu" unique_id=154127666]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.39652172
+anchor_top = 0.6413044
+anchor_right = 0.6017391
+anchor_bottom = 0.8385093
+offset_left = 3.0517578e-05
+offset_bottom = 3.0517578e-05
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Options" type="VBoxContainer" parent="pause_menu/Settings" unique_id=79811795]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 308.0
+offset_right = 277.0
+offset_bottom = 438.0
+
+[connection signal="pressed" from="pause_menu/FirstButtons/Resume" to="pause_menu" method="_on_resume_pressed"]
+[connection signal="pressed" from="pause_menu/FirstButtons/Settings" to="pause_menu" method="_on_settings_pressed"]
+[connection signal="pressed" from="pause_menu/FirstButtons/Quit" to="pause_menu" method="_on_quit_pressed"]
