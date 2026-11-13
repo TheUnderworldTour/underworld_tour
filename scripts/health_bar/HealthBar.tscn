@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://blgoq0brkhigo"]
+
+[ext_resource type="Script" uid="uid://dtnp0v1hr33tw" path="res://health_bar.gd" id="1_n0c2p"]
+
+[node name="HealthBar" type="Node2D" unique_id=1563120954]
+script = ExtResource("1_n0c2p")
+
+[node name="HealthLabel" type="Label" parent="." unique_id=1979166038]
+offset_left = 532.0
+offset_top = 128.0
+offset_right = 611.0
+offset_bottom = 151.0
+text = "Health: 5"
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1555189646]
+offset_left = 425.0
+offset_top = 155.0
+offset_right = 718.0
+offset_bottom = 182.0
+max_value = 10.0
+step = 1.0
