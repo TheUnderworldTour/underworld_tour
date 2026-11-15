@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://blgoq0brkhigo"]
 
-[ext_resource type="Script" uid="uid://dtnp0v1hr33tw" path="res://scripts/health_bar.gd" id="1_n0c2p"]
+[ext_resource type="Script" path="res://scripts/health_bar.gd" id="1_n0c2p"]
 
 [node name="HealthBar" type="Node2D" unique_id=1563120954]
 script = ExtResource("1_n0c2p")

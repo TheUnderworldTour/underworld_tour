@@ -5,9 +5,12 @@ extends Node
 ## and hit tallies, and emits a single [signal judged] event that the
 ## rest of the game (HUD, effects) consumes.
 
-signal judged(judgement: Judgement, accuracy: float, time_error: float, note: Note)
+signal judged(
+	judgement: Judgement, accuracy: float, time_error: float, note: Note, phase: Phase
+)
 
 enum Judgement { PERFECT, GREAT, GOOD, MISS }
+enum Phase { TAP, HOLD_START, HOLD_END }
 
 ## Half-width in seconds of each judgement window, ordered tightest first.
 const WINDOWS := {
@@ -55,12 +58,12 @@ var accuracy_sum := 0.0
 var note_count := 0
 
 
-func judge_note_hit(note: Note, accuracy: float) -> void:
-	_judge(_classify(accuracy), accuracy, note.get_time_error(), note)
+func judge_note_hit(note: Note, accuracy: float, phase: Phase = Phase.TAP) -> void:
+	_judge(_classify(accuracy), accuracy, note.get_time_error(), note, phase)
 
 
 func judge_note_miss(note: Note) -> void:
-	_judge(Judgement.MISS, INF, 0.0, note)
+	_judge(Judgement.MISS, INF, 0.0, note, Phase.TAP)
 
 
 func judge_hold_completed(note: Note, release_accuracy: float) -> void:
@@ -70,11 +73,13 @@ func judge_hold_completed(note: Note, release_accuracy: float) -> void:
 		judgement = Judgement.PERFECT
 	elif release_accuracy > RELEASE_GOOD_WINDOW:
 		judgement = Judgement.GOOD
-	_judge(judgement, release_accuracy, note.get_time_error(), note)
+	# Release timing is relative to the tail. The current callback supplies
+	# only an absolute error, so signed release timing is unavailable.
+	_judge(judgement, release_accuracy, INF, note, Phase.HOLD_END)
 
 
 func judge_hold_broken(note: Note) -> void:
-	_judge(Judgement.MISS, INF, 0.0, note)
+	_judge(Judgement.MISS, INF, 0.0, note, Phase.HOLD_END)
 
 
 func get_final_accuracy() -> float:
@@ -90,7 +95,9 @@ func _classify(accuracy: float) -> Judgement:
 	return Judgement.MISS
 
 
-func _judge(judgement: Judgement, accuracy: float, time_error: float, note: Note) -> void:
+func _judge(
+	judgement: Judgement, accuracy: float, time_error: float, note: Note, phase: Phase
+) -> void:
 	tally[judgement] += 1
 	score += SCORES[judgement]
 	accuracy_sum += ACCURACY_WEIGHTS[judgement]
@@ -100,4 +107,4 @@ func _judge(judgement: Judgement, accuracy: float, time_error: float, note: Note
 	else:
 		combo += 1
 		max_combo = maxi(max_combo, combo)
-	judged.emit(judgement, accuracy, time_error, note)
+	judged.emit(judgement, accuracy, time_error, note, phase)
