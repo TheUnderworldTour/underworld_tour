@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/battle_controller.gd" id="1_controller"]
+[ext_resource type="PackedScene" path="res://scenes/rhythm_core.tscn" id="2_rhythm"]
+[ext_resource type="Script" path="res://scripts/battle/rhythm_penalty.gd" id="3_penalty"]
+
+[sub_resource type="Resource" id="Resource_missed_note"]
+script = ExtResource("3_penalty")
+damage = 5.0
+
+[sub_resource type="Resource" id="Resource_extra_note"]
+script = ExtResource("3_penalty")
+damage = 3.0
+
+[node name="Battle" type="Node2D"]
+script = ExtResource("1_controller")
+missed_note_penalty = SubResource("Resource_missed_note")
+extra_note_penalty = SubResource("Resource_extra_note")
+
+[node name="RhythmCore" parent="." instance=ExtResource("2_rhythm")]
+
+[node name="BattleHud" type="CanvasLayer" parent="."]
+
+[node name="Readout" type="VBoxContainer" parent="BattleHud"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 16.0
+offset_right = -16.0
+grow_horizontal = 0
+
+[node name="PlayerHealth" type="Label" parent="BattleHud/Readout"]
+
+[node name="BossHealth" type="Label" parent="BattleHud/Readout"]
+
+[node name="Result" type="Label" parent="BattleHud/Readout"]
+
+[node name="RetryButton" type="Button" parent="BattleHud/Readout"]
+visible = false
+text = "Retry"

@@ -37,6 +37,7 @@ var _off_screen_position: Vector2
 ## Where the note should be when the player strikes it; always assigned
 ## by the spawner (rhythm_core.gd) before the note enters the tree.
 var target_position: Vector2
+var chart_note_id: int = -1
 
 @onready var _arrow: Sprite2D = $Arrow
 
