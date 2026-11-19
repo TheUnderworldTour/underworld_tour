@@ -27,6 +27,8 @@ signal missed
 ## target beat counts as a hit.
 @export var hit_window := 0.15
 
+@onready var _arrow: Sprite2D = $Arrow
+
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
 var _travel_time: float = 2.4
@@ -36,9 +38,6 @@ var _off_screen_position: Vector2
 ## by the spawner (rhythm_core.gd) before the note enters the tree.
 var target_position: Vector2
 var chart_note_id: int = -1
-
-@onready var _arrow: Sprite2D = $Arrow
-
 
 var target_beat: int:
 	get:
@@ -54,6 +53,9 @@ var length_beats: int:
 	get:
 		return chart_coords.z
 
+const TRAVEL_DISTANCE := 800
+const BAR_WIDTH := 60.0
+const CORNER_RADIUS := 12.0
 
 func _ready() -> void:
 	_conductor = get_tree().get_first_node_in_group("conductor")
@@ -63,6 +65,16 @@ func _ready() -> void:
 	_off_screen_position = _get_spawn_position()
 	_arrow.rotation_degrees = lane * 90.0
 	position = _off_screen_position
+
+func _draw() -> void:
+	var tail_height := _get_tail_height()
+	if tail_height <= 0.0:
+		return
+	var style_box := StyleBoxFlat.new()
+	style_box.bg_color = Color.WHITE # can be changed to match arrows
+	style_box.set_corner_radius_all(CORNER_RADIUS)
+	var bar_rect := Rect2(-BAR_WIDTH / 2.0, -tail_height, BAR_WIDTH, tail_height)
+	style_box.draw(get_canvas_item(), bar_rect)
 
 
 func _physics_process(_delta: float) -> void:
@@ -127,3 +139,6 @@ func _get_spawn_position() -> Vector2:
 
 func _despawn() -> void:
 	queue_free()
+
+func _get_tail_height() -> float:
+	return length_beats * (TRAVEL_DISTANCE / beats_early)
