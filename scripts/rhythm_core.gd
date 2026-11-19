@@ -14,7 +14,7 @@ const HIT_ACTIONS: Dictionary[String, int] = {
 }
 
 @export var start_delay_beats := 4
-@export var chart: Array[Vector2i] = []
+@export var chart: Array[Vector3i] = []
 
 @onready var _conductor: AudioStreamPlayer = $Conductor
 @onready var _score_label: Label = $HUD/ScoreLabel
@@ -38,12 +38,13 @@ var _notes: Array[Note] = []
 
 func _ready() -> void:
 	# This will hopefully be replaced by a .json file in the future
-	# 3 = left, 0 = up, 2 = down, 1 = right
+	# Lane order: 0 = up, 1 = right, 2 = down, 3 = left
+	# Vector3i entries are (beat, lane, length in beats)
 	chart = [
-		Vector2i(1, 3), Vector2i(1, 0), Vector2i(4, 0), Vector2i(4, 2), Vector2i(8, 2), 
-		Vector2i(9, 3), Vector2i(10, 0), Vector2i(11, 0),
+		Vector3i(1, 3, 1), Vector3i(1, 0, 1), Vector3i(4, 0, 1), Vector3i(4, 2, 1), Vector3i(8, 2, 1),
+		Vector3i(9, 3, 1), Vector3i(10, 0, 1), Vector3i(11, 0, 1),
 	]
-	chart.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x)
+	chart.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return a.x < b.x)
 	_judge = Judge.new()
 	add_child(_judge)
 	_judge.judged.connect(_on_judge_judged)
@@ -64,7 +65,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var best: Note = null
 	var best_accuracy: float = INF
 	for note: Note in _notes:
-		if not is_instance_valid(note) or note.direction != direction or not note.can_hit():
+		if not is_instance_valid(note) or note.lane != direction or not note.can_hit():
 			continue
 		var accuracy: float = note.get_accuracy()
 		if accuracy < best_accuracy:
@@ -90,11 +91,10 @@ func _on_conductor_beat(position: int) -> void:
 		_next_note += 1
 
 
-func _spawn_note(entry: Vector2i) -> void:
+func _spawn_note(entry: Vector3i) -> void:
 	var note: Note = NOTE_SCENE.instantiate()
 	note.chart_note_id = _next_note
-	note.target_beat = entry.x
-	note.direction = entry.y
+	note.chart_coords = entry
 	note.target_position = _receptors[entry.y]["position"]
 	note.hit.connect(_on_note_hit.bind(note))
 	note.missed.connect(_on_note_missed.bind(note))
@@ -141,7 +141,7 @@ func _on_judge_judged(
 
 	var event: RhythmJudgment = RhythmJudgment.new()
 	event.note_id = note.chart_note_id
-	event.lane = note.direction
+	event.lane = note.lane
 	event.target_beat = note.target_beat
 	event.song_time_sec = _conductor.song_position
 	event.tier = judgement

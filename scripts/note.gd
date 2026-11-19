@@ -16,11 +16,9 @@ signal hold_broken
 ## Emitted when the note's hit window passes without input.
 signal missed
 
-## Beat number (from the conductor) this note should be struck on.
-@export var target_beat := 0
-
-## Direction the arrow points: 0 = up, 1 = right, 2 = down, 3 = left.
-@export_range(0, 3) var direction := 0
+## Chart coordinates of this note: x = beat to strike, y = lane (0 = up,
+## 1 = right, 2 = down, 3 = left), z = length in beats (1 = tap note).
+@export var chart_coords := Vector3i.ZERO
 
 ## How many beats before the target beat the note spawns on screen.
 @export var beats_early := 4
@@ -42,13 +40,28 @@ var chart_note_id: int = -1
 @onready var _arrow: Sprite2D = $Arrow
 
 
+var target_beat: int:
+	get:
+		return chart_coords.x
+
+
+var lane: int:
+	get:
+		return chart_coords.y
+
+
+var length_beats: int:
+	get:
+		return chart_coords.z
+
+
 func _ready() -> void:
 	_conductor = get_tree().get_first_node_in_group("conductor")
 	if _conductor != null:
 		_sec_per_beat = _conductor.sec_per_beat
 	_travel_time = beats_early * _sec_per_beat
 	_off_screen_position = _get_spawn_position()
-	_arrow.rotation_degrees = direction * 90.0
+	_arrow.rotation_degrees = lane * 90.0
 	position = _off_screen_position
 
 
