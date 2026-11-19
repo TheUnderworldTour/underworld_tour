@@ -73,6 +73,11 @@ func can_hit() -> bool:
 	return not _has_been_hit and _get_accuracy() <= hit_window
 
 
+## Hold implementations override this and keep the note alive until it resolves.
+func is_hold_note() -> bool:
+	return false
+
+
 func get_accuracy() -> float:
 	return _get_accuracy()
 

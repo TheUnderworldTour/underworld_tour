@@ -58,12 +58,14 @@ var accuracy_sum := 0.0
 var note_count := 0
 
 
-func judge_note_hit(note: Note, accuracy: float, phase: Phase = Phase.TAP) -> void:
+func judge_note_hit(note: Note, accuracy: float) -> void:
+	var phase: Phase = Phase.HOLD_START if note.is_hold_note() else Phase.TAP
 	_judge(_classify(accuracy), accuracy, note.get_time_error(), note, phase)
 
 
 func judge_note_miss(note: Note) -> void:
-	_judge(Judgement.MISS, INF, 0.0, note, Phase.TAP)
+	var phase: Phase = Phase.HOLD_END if note.is_hold_note() else Phase.TAP
+	_judge(Judgement.MISS, INF, 0.0, note, phase)
 
 
 func judge_hold_completed(note: Note, release_accuracy: float) -> void:

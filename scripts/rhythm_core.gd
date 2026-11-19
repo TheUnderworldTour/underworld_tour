@@ -31,7 +31,7 @@ const HIT_ACTIONS: Dictionary[String, int] = {
 
 var _judge: Judge
 var _next_note: int = 0
-var _completed_notes: int = 0
+var _completed_note_ids: Dictionary[int, bool] = {}
 var _chart_stopped: bool = false
 var _notes: Array[Note] = []
 
@@ -135,6 +135,11 @@ func _on_judge_judged(
 ) -> void:
 	if _chart_stopped:
 		return
+	var is_terminal: bool = phase != Judge.Phase.HOLD_START
+	if _completed_note_ids.has(note.chart_note_id):
+		return
+	if is_terminal:
+		_completed_note_ids[note.chart_note_id] = true
 	_score_label.text = "Score: %d" % _judge.score
 	_combo_label.text = "Combo: %d" % _judge.combo
 	_show_judgement(judgement)
@@ -150,10 +155,8 @@ func _on_judge_judged(
 	event.time_error_sec = time_error if is_finite(accuracy) else INF
 	event.has_input_timing = is_finite(accuracy)
 	note_judged.emit(event)
-	if phase != Judge.Phase.HOLD_START:
-		_completed_notes += 1
-		if _completed_notes == chart.size():
-			chart_completed.emit()
+	if is_terminal and _completed_note_ids.size() == chart.size():
+		chart_completed.emit()
 
 
 func _show_judgement(judgement: Judge.Judgement) -> void:

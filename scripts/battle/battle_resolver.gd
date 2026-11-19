@@ -12,10 +12,10 @@ const DAMAGE_BOOST_PER_COPY: float = 0.25
 func resolve_judgment(
 	event: RhythmJudgment, state: BattleState, miss_penalty: RhythmPenalty
 ) -> void:
+	if state.outcome != BattleState.Outcome.ACTIVE or event.phase == Judge.Phase.HOLD_START:
+		return
 	if event.tier == Judge.Judgement.MISS:
 		resolve_rhythm_penalty(miss_penalty, state)
-		return
-	if state.outcome != BattleState.Outcome.ACTIVE or event.phase == Judge.Phase.HOLD_START:
 		return
 	var multiplier: float = 1.0 + state.get_item_quantity(&"damage_boost") * DAMAGE_BOOST_PER_COPY
 	state.boss_health = maxf(0.0, state.boss_health - BASE_DAMAGE[event.tier] * multiplier)
