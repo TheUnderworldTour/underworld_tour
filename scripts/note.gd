@@ -27,7 +27,7 @@ signal missed
 ## target beat counts as a hit.
 @export var hit_window := 0.15
 
-@onready var _arrow: Sprite2D = $Arrow
+@onready var _hit_box: CollisionShape2D = $HitBox
 
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
@@ -63,8 +63,14 @@ func _ready() -> void:
 		_sec_per_beat = _conductor.sec_per_beat
 	_travel_time = beats_early * _sec_per_beat
 	_off_screen_position = _get_spawn_position()
-	_arrow.rotation_degrees = lane * 90.0
 	position = _off_screen_position
+	
+	var tail_height := _get_tail_height()
+	if tail_height > 0.0:
+		var shape: RectangleShape2D = _hit_box.shape
+		shape.size = Vector2(shape.size.x, shape.size.y + tail_height)
+		_hit_box.position.y = -tail_height / 2.0
+		_hit_box.scale = Vector2(1.1, 1.1) * 1.0
 
 func _draw() -> void:
 	var tail_height := _get_tail_height()
