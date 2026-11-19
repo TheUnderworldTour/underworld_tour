@@ -33,6 +33,7 @@ var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
 var _travel_time: float = 2.4
 var _has_been_hit := false
+var _holding := false
 var _off_screen_position: Vector2
 ## Where the note should be when the player strikes it; always assigned
 ## by the spawner (rhythm_core.gd) before the note enters the tree.
@@ -54,7 +55,7 @@ var length_beats: int:
 		return chart_coords.z
 
 const TRAVEL_DISTANCE := 800
-const BAR_WIDTH := 60.0
+const BAR_WIDTH := 30.0
 const CORNER_RADIUS := 12.0
 
 func _ready() -> void:
@@ -85,23 +86,32 @@ func _draw() -> void:
 
 func _physics_process(_delta: float) -> void:
 	# Check to make sure we should actually show notes
-	if _has_been_hit or _conductor == null:
+	if _conductor == null:
 		return
 	if not _conductor.is_song_running():
 		return
-	var target_time := target_beat * _sec_per_beat
-	var spawn_time := target_time - _travel_time
+	var spawn_time := target_beat * _sec_per_beat - _travel_time
 	if _conductor.song_position < spawn_time:
 		return
-	
-	var progress := clampf((_conductor.song_position - spawn_time) / _travel_time, 0.0, 1.0)
-	position = _off_screen_position.lerp(target_position, progress)
+	if _has_been_hit:
+		return
+	var progress: float = (_conductor.song_position - spawn_time) / _travel_time
+	if _holding:
+		# Keep scrolling past the receptor until the tail end arrives.
+		position = _off_screen_position.lerp(target_position, progress)
+		_process_hold_end()
+		return
+	position = _off_screen_position.lerp(target_position, clampf(progress, 0.0, 1.0))
 	if progress >= 1.0:
 		_check_miss()
 
 
 func can_hit() -> bool:
-	return not _has_been_hit and _get_accuracy() <= hit_window
+	return not _has_been_hit and not _holding and _get_accuracy() <= hit_window
+
+
+func is_holding() -> bool:
+	return _holding
 
 
 func get_accuracy() -> float:
@@ -116,10 +126,40 @@ func get_time_error() -> float:
 
 
 func hit_note() -> void:
-	if _has_been_hit:
+	if _has_been_hit or _holding:
+		return
+	if length_beats > 1:
+		_holding = true
+		hit.emit(_get_accuracy())
 		return
 	_has_been_hit = true
 	hit.emit(_get_accuracy())
+	_despawn()
+
+
+## Called by the input owner (rhythm_core.gd) when the lane key is
+## released while this note is being held. Releasing after the tail end
+## completes the hold; releasing early breaks it.
+func release_hold() -> void:
+	if not _holding:
+		return
+	_holding = false
+	_has_been_hit = true
+	var end_time := (target_beat + length_beats) * _sec_per_beat
+	var release_error: float = _conductor.song_position - end_time
+	if release_error >= 0.0:
+		hold_completed.emit(absf(release_error))
+	else:
+		hold_broken.emit()
+	_despawn()
+
+
+func _process_hold_end() -> void:
+	if _conductor.song_position < (target_beat + length_beats) * _sec_per_beat:
+		return
+	_holding = false
+	_has_been_hit = true
+	hold_completed.emit(INF)
 	_despawn()
 
 

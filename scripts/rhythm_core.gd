@@ -41,7 +41,7 @@ func _ready() -> void:
 	# Lane order: 0 = up, 1 = right, 2 = down, 3 = left
 	# Vector3i entries are (beat, lane, length in beats)
 	chart = [
-		Vector3i(1, 3, 1), Vector3i(1, 0, 1), Vector3i(4, 0, 1), Vector3i(4, 2, 1), Vector3i(8, 2, 1),
+		Vector3i(1, 3, 3), Vector3i(1, 0, 1), Vector3i(4, 0, 1), Vector3i(4, 2, 1), Vector3i(8, 2, 1),
 		Vector3i(9, 3, 1), Vector3i(10, 0, 1), Vector3i(11, 0, 1),
 	]
 	chart.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return a.x < b.x)
@@ -56,11 +56,19 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _chart_stopped:
 		return
 	var direction: int = -1
+	var released := false
 	for action: String in HIT_ACTIONS:
-		if event.is_action_pressed(action):
+		if event.is_action_pressed(action) or event.is_action_released(action):
 			direction = HIT_ACTIONS[action]
+			released = event.is_action_released(action)
 			break
 	if direction == -1:
+		return
+	if released:
+		var holding_note: Note = _find_holding_note(direction)
+		if holding_note != null:
+			holding_note.release_hold()
+			_prune_despawned_notes()
 		return
 	var best: Note = null
 	var best_accuracy: float = INF
@@ -73,8 +81,17 @@ func _unhandled_input(event: InputEvent) -> void:
 			best_accuracy = accuracy
 	if best != null:
 		best.hit_note()
+	elif _find_holding_note(direction) != null:
+		pass
 	elif _conductor.is_song_running():
 		extra_note_played.emit(direction, _conductor.song_position)
+
+
+func _find_holding_note(lane: int) -> Note:
+	for note: Note in _notes:
+		if is_instance_valid(note) and note.lane == lane and note.is_holding():
+			return note
+	return null
 
 
 func stop_chart() -> void:
@@ -105,7 +122,8 @@ func _spawn_note(entry: Vector3i) -> void:
 
 
 func _on_note_hit(accuracy: float, note: Note) -> void:
-	_judge.judge_note_hit(note, accuracy)
+	var phase := Judge.Phase.HOLD_START if note.length_beats > 1 else Judge.Phase.TAP
+	_judge.judge_note_hit(note, accuracy, phase)
 	character_portrait.play_good()
 
 
@@ -117,6 +135,7 @@ func _on_note_missed(note: Note) -> void:
 
 func _on_note_hold_completed(release_accuracy: float, note: Note) -> void:
 	_judge.judge_hold_completed(note, release_accuracy)
+	_prune_despawned_notes()
 
 
 func _on_note_hold_broken(note: Note) -> void:
