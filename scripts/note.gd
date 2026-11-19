@@ -55,6 +55,7 @@ var length_beats: int:
 		return chart_coords.z
 
 const TRAVEL_DISTANCE := 800
+const TAP_HEIGHT := 48.0
 const BAR_WIDTH := 30.0
 const CORNER_RADIUS := 12.0
 
@@ -66,21 +67,21 @@ func _ready() -> void:
 	_off_screen_position = _get_spawn_position()
 	position = _off_screen_position
 	
-	var tail_height := _get_tail_height()
-	if tail_height > 0.0:
+	var bar_height := _get_bar_height()
+	if length_beats > 1:
 		var shape: RectangleShape2D = _hit_box.shape
-		shape.size = Vector2(shape.size.x, shape.size.y + tail_height)
-		_hit_box.position.y = -tail_height / 2.0
+		shape.size = Vector2(shape.size.x, shape.size.y + bar_height)
+		_hit_box.position.y = -bar_height / 2.0
 		_hit_box.scale = Vector2(1.1, 1.1) * 1.0
 
 func _draw() -> void:
-	var tail_height := _get_tail_height()
-	if tail_height <= 0.0:
+	var bar_height := _get_bar_height()
+	if bar_height <= 0.0:
 		return
 	var style_box := StyleBoxFlat.new()
-	style_box.bg_color = Color.WHITE # can be changed to match arrows
+	style_box.bg_color = Color.from_rgba8(197, 198, 198) # can be changed to match arrows
 	style_box.set_corner_radius_all(CORNER_RADIUS)
-	var bar_rect := Rect2(-BAR_WIDTH / 2.0, -tail_height, BAR_WIDTH, tail_height)
+	var bar_rect := Rect2(-BAR_WIDTH / 2.0, -bar_height, BAR_WIDTH, bar_height)
 	style_box.draw(get_canvas_item(), bar_rect)
 
 
@@ -176,15 +177,21 @@ func _check_miss() -> void:
 	if _get_accuracy() > hit_window:
 		_has_been_hit = true
 		missed.emit()
-		_despawn()
+		_despawn(Color.RED)
 
 
 func _get_spawn_position() -> Vector2:
 	return Vector2(target_position.x, target_position.y - 800.0)
 
 
-func _despawn() -> void:
-	queue_free()
+func _despawn(fade_color: Color = Color.WHITE) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate", fade_color, 0.12)
+	tween.tween_property(self, "scale", scale * 0.85, 0.12)
+	tween.chain().tween_callback(queue_free)
 
-func _get_tail_height() -> float:
+func _get_bar_height() -> float:
+	if length_beats <= 1:
+		return TAP_HEIGHT
 	return length_beats * (TRAVEL_DISTANCE / beats_early)

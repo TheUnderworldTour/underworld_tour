@@ -41,7 +41,7 @@ func _ready() -> void:
 	# Lane order: 0 = up, 1 = right, 2 = down, 3 = left
 	# Vector3i entries are (beat, lane, length in beats)
 	chart = [
-		Vector3i(1, 3, 3), Vector3i(1, 0, 1), Vector3i(4, 0, 1), Vector3i(4, 2, 1), Vector3i(8, 2, 1),
+		Vector3i(1, 3, 3), Vector3i(1, 0, 3), Vector3i(4, 0, 3), Vector3i(4, 2, 3), Vector3i(8, 2, 1),
 		Vector3i(9, 3, 1), Vector3i(10, 0, 1), Vector3i(11, 0, 1),
 	]
 	chart.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return a.x < b.x)
