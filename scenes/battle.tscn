@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://scenes/rhythm_core.tscn" id="2_rhythm"]
 [ext_resource type="Script" path="res://scripts/battle/rhythm_penalty.gd" id="3_penalty"]
 
+[ext_resource type="PackedScene" path="res://scenes/battle_inventory_menu.tscn" id="4_inventory"]
+
 [sub_resource type="Resource" id="Resource_missed_note"]
 script = ExtResource("3_penalty")
 damage = 5.0
@@ -39,3 +41,5 @@ grow_horizontal = 0
 [node name="RetryButton" type="Button" parent="BattleHud/Readout"]
 visible = false
 text = "Retry"
+
+[node name="BattleInventoryMenu" parent="." instance=ExtResource("4_inventory")]

@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/items/battle_inventory_menu.gd" id="1_menu"]
+
+[node name="BattleInventoryMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 10
+script = ExtResource("1_menu")
+
+[node name="ItemsButton" type="Button" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 100.0
+offset_bottom = 48.0
+focus_mode = 0
+text = "Items"
+
+[node name="ItemsPanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 300.0
+offset_bottom = 180.0
+
+[node name="Content" type="VBoxContainer" parent="ItemsPanel"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ItemsPanel/Content"]
+text = "Items"
+
+[node name="Items" type="VBoxContainer" parent="ItemsPanel/Content"]
+
+[node name="CloseButton" type="Button" parent="ItemsPanel/Content"]
+text = "Close"
