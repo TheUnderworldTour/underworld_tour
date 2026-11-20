@@ -1,6 +1,7 @@
 class_name RhythmJudgment
 extends RefCounted
 
+var instrument: ItemDefinition.Instrument = ItemDefinition.Instrument.ALL
 var note_id: int
 var lane: int
 var target_beat: int
