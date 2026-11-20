@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://tvtpkevna3ew"]
+
+[ext_resource type="Script" uid="uid://7xgwnj2jp5ic" path="res://scripts/pause_screen.gd" id="1_hdmo1"]
+[ext_resource type="Script" uid="uid://c1jir8abwcwey" path="res://pause_menu.gd" id="2_myx47"]
+
+[node name="PauseScreen" type="CanvasLayer" unique_id=586033016]
+script = ExtResource("1_hdmo1")
+
+[node name="PauseMenu" type="Control" parent="." unique_id=1989789024]
+process_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1147.0
+offset_bottom = 645.0
+script = ExtResource("2_myx47")
+
+[node name="Panel" type="Panel" parent="PauseMenu" unique_id=1516432070]
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 646.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu" unique_id=1638685939]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -64.0
+offset_right = 100.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PauseMenu/VBoxContainer" unique_id=576534171]
+layout_mode = 2
+text = "Pause Menu"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="PauseMenu/VBoxContainer" unique_id=623102446]
+layout_mode = 2
+text = "Resume"
+
+[node name="Settings" type="Button" parent="PauseMenu/VBoxContainer" unique_id=1977579151]
+layout_mode = 2
+text = "Settings"
+
+[node name="Quit" type="Button" parent="PauseMenu/VBoxContainer" unique_id=261649684]
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="PauseMenu/VBoxContainer/Resume" to="PauseMenu" method="_on_resume_pressed"]
+[connection signal="pressed" from="PauseMenu/VBoxContainer/Quit" to="PauseMenu" method="_on_quit_pressed"]
