@@ -6,6 +6,7 @@ signal extra_note_played(lane: int, song_time_sec: float)
 signal chart_completed
 
 const NOTE_SCENE := preload("res://scenes/note.tscn")
+const FLAME_SCENE := preload("res://scenes/flame_particles.tscn")
 const HIT_ACTIONS: Dictionary[String, int] = {
 	"hit_up": 0,
 	"hit_right": 1,
@@ -35,6 +36,9 @@ var _completed_notes: int = 0
 var _chart_stopped: bool = false
 var _notes: Array[Note] = []
 var _chart: Array[Vector3i] = []
+var _judgement_tween: Tween
+var _judgement_flames: Array[CPUParticles2D] = []
+var _last_hellish_frame := -1
 
 
 func _ready() -> void:
@@ -211,11 +215,60 @@ func _on_judge_judged(
 
 
 func _show_judgement(judgement: Judge.Judgement) -> void:
-	var text: String = Judge.Judgement.keys()[judgement]
-	_judgement_label.text = text
-	_judgement_label.modulate = Judge.TIER_COLORS[judgement]
-	_judgement_label.scale = Vector2.ONE * 1.25
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(_judgement_label, "scale", Vector2.ONE, 0.08)
-	tween.tween_property(_judgement_label, "modulate:a", 0.0, 0.4).set_delay(0.15)
+	var hellish := judgement == Judge.Judgement.HELLISH
+	var frame := Engine.get_process_frames()
+	if hellish:
+		_last_hellish_frame = frame
+	elif frame == _last_hellish_frame:
+		return
+	if _judgement_tween != null:
+		_judgement_tween.kill()
+	_judgement_label.text = Judge.Judgement.keys()[judgement]
+	_judgement_label.add_theme_color_override("font_color", Judge.TIER_COLORS[judgement])
+	_judgement_label.modulate.a = 1.0
+	_judgement_label.scale = Vector2.ONE * (1.85 if hellish else 1.2)
+	_set_judgement_fire(hellish)
+
+	var settled_scale := Vector2.ONE * (1.45 if hellish else 1.0)
+	_judgement_tween = _judgement_label.create_tween().set_parallel(true)
+	_judgement_tween.tween_property(
+		_judgement_label, "scale", settled_scale, 0.2 if hellish else 0.08
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_judgement_tween.tween_property(_judgement_label, "modulate:a", 0.0, 0.4).set_delay(
+		0.4 if hellish else 0.15
+	)
+	_judgement_tween.chain().tween_callback(_set_judgement_fire.bind(false))
+
+
+func _set_judgement_fire(active: bool) -> void:
+	if active and _judgement_flames.is_empty():
+		_create_judgement_flames()
+	for flame: CPUParticles2D in _judgement_flames:
+		if active:
+			flame.show()
+			flame.restart()
+		else:
+			flame.emitting = false
+			flame.hide()
+
+
+func _create_judgement_flames() -> void:
+	var text := _judgement_label.text
+	var font := _judgement_label.get_theme_font("font")
+	var font_size := _judgement_label.get_theme_font_size("font_size")
+	var text_width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var left := (_judgement_label.size.x - text_width) * 0.5
+	var previous_end := 0.0
+	for index in range(text.length()):
+		var letter_end := font.get_string_size(
+			text.left(index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size
+		).x
+		var flame := FLAME_SCENE.instantiate() as CPUParticles2D
+		flame.position = Vector2(left + (previous_end + letter_end) * 0.5, _judgement_label.size.y * 0.44)
+		flame.emission_rect_extents.x = (letter_end - previous_end) * 0.24
+		flame.amount = 12
+		flame.local_coords = true
+		flame.show_behind_parent = true
+		_judgement_label.add_child(flame)
+		_judgement_flames.append(flame)
+		previous_end = letter_end

@@ -55,12 +55,20 @@ offset_bottom = 108.0
 text = "Combo: 0"
 
 [node name="JudgementLabel" type="Label" parent="HUD" unique_id=618535285]
+process_mode = 1
 top_level = true
+z_index = 10
 layout_mode = 0
-offset_left = 500.0
-offset_top = 20.0
-offset_right = 660.0
-offset_bottom = 43.0
+offset_left = 375.0
+offset_top = 50.0
+offset_right = 775.0
+offset_bottom = 110.0
+pivot_offset = Vector2(200, 30)
+theme_override_colors/font_outline_color = Color(0.11, 0.035, 0.07, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Playfield" type="Node2D" parent="." unique_id=939433344]
 
