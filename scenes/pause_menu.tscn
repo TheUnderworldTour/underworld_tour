@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://tvtpkevna3ew"]
 
 [ext_resource type="Script" uid="uid://7xgwnj2jp5ic" path="res://scripts/pause_screen.gd" id="1_hdmo1"]
-[ext_resource type="Script" uid="uid://c1jir8abwcwey" path="res://pause_menu.gd" id="2_myx47"]
+[ext_resource type="Script" uid="uid://be6l31u1uwf5y" path="res://scripts/pause_menu.gd" id="2_myx47"]
 
 [node name="PauseScreen" type="CanvasLayer" unique_id=586033016]
 script = ExtResource("1_hdmo1")
