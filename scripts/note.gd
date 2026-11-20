@@ -7,7 +7,7 @@ signal hit(accuracy: float)
 
 ## Emitted when a long note's hold runs to completion with the key held.
 ## `release_accuracy` is the absolute seconds the release lands from the
-## hold's end beat (INF if the hold auto-completed while still held).
+## hold's end beat (near zero when the hold auto-completed while still held).
 signal hold_completed(release_accuracy: float)
 
 ## Emitted when a long note's hold is dropped before its end beat.
@@ -156,11 +156,12 @@ func release_hold() -> void:
 
 
 func _process_hold_end() -> void:
-	if _conductor.song_position < (target_beat + length_beats) * _sec_per_beat:
+	var end_time := (target_beat + length_beats) * _sec_per_beat
+	if _conductor.song_position < end_time:
 		return
 	_holding = false
 	_has_been_hit = true
-	hold_completed.emit(INF)
+	hold_completed.emit(absf(_conductor.song_position - end_time))
 	_despawn()
 
 
