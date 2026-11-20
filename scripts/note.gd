@@ -69,8 +69,9 @@ func _ready() -> void:
 	
 	var bar_height := _get_bar_height()
 	if length_beats > 1:
-		var shape: RectangleShape2D = _hit_box.shape
+		var shape: RectangleShape2D = _hit_box.shape.duplicate()
 		shape.size = Vector2(shape.size.x, shape.size.y + bar_height)
+		_hit_box.shape = shape
 		_hit_box.position.y = -bar_height / 2.0
 		_hit_box.scale = Vector2(1.1, 1.1) * 1.0
 
