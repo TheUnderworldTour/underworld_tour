@@ -196,4 +196,4 @@ func _despawn(fade_color: Color = Color.WHITE) -> void:
 func _get_bar_height() -> float:
 	if length_beats <= 1:
 		return TAP_HEIGHT
-	return length_beats * (TRAVEL_DISTANCE / beats_early)
+	return length_beats * (TRAVEL_DISTANCE / float(beats_early))
