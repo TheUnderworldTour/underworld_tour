@@ -28,7 +28,10 @@ theme_override_constants/separation = 12
 [node name="Title" type="Label" parent="ItemsPanel/Content"]
 text = "Items"
 
-[node name="Items" type="VBoxContainer" parent="ItemsPanel/Content"]
+[node name="Items" type="GridContainer" parent="ItemsPanel/Content"]
+columns = 4
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 
 [node name="DemoItemsButton" type="Button" parent="ItemsPanel/Content"]
 text = "Equip demo items and restart"

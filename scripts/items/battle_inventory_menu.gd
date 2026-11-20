@@ -2,7 +2,7 @@ extends CanvasLayer
 
 @onready var _toggle: Button = $ItemsButton
 @onready var _panel: PanelContainer = $ItemsPanel
-@onready var _items: VBoxContainer = $ItemsPanel/Content/Items
+@onready var _items: GridContainer = $ItemsPanel/Content/Items
 @onready var _close: Button = $ItemsPanel/Content/CloseButton
 
 var _owns_pause: bool = false
@@ -70,21 +70,32 @@ func _refresh_items() -> void:
 	item_ids.sort()
 	for item_id: StringName in item_ids:
 		var definition: ItemDefinition = GameState.get_item_definition(item_id)
-		var row: HBoxContainer = HBoxContainer.new()
-		if definition != null and definition.icon != null:
-			var icon: TextureRect = TextureRect.new()
-			icon.texture = definition.icon
-			icon.custom_minimum_size = Vector2(40, 40)
-			icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			row.add_child(icon)
-		var label: Label = Label.new()
+		var tile: Button = Button.new()
+		tile.custom_minimum_size = Vector2(64, 64)
+		tile.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		tile.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		tile.focus_mode = Control.FOCUS_NONE
 		var item_name: String = definition.display_name if definition != null else String(item_id)
-		label.text = "%s ×%d" % [item_name, inventory[item_id]]
+		tile.tooltip_text = item_name
 		if definition != null:
-			label.tooltip_text = definition.description
-		row.add_child(label)
-		_items.add_child(row)
+			tile.tooltip_text += "\n" + definition.description
+		if definition != null and definition.icon != null:
+			tile.icon = definition.icon
+			tile.expand_icon = true
+		else:
+			tile.text = str(item_ids.find(item_id) + 1)
+		var quantity: Label = Label.new()
+		quantity.name = "Quantity"
+		quantity.text = "×%d" % inventory[item_id]
+		quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tile.add_child(quantity)
+		quantity.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+		quantity.offset_left = 5.0
+		quantity.offset_top = -22.0
+		quantity.offset_right = 59.0
+		quantity.offset_bottom = -3.0
+		quantity.add_theme_font_size_override("font_size", 12)
+		_items.add_child(tile)
 	if inventory.is_empty():
 		var empty: Label = Label.new()
 		empty.text = "No items"
