@@ -38,3 +38,12 @@ text = "Equip demo items and restart"
 
 [node name="CloseButton" type="Button" parent="ItemsPanel/Content"]
 text = "Close"
+
+[node name="HoverPanel" type="PanelContainer" parent="."]
+visible = false
+mouse_filter = 2
+
+[node name="Text" type="Label" parent="HoverPanel"]
+custom_minimum_size = Vector2(260, 0)
+mouse_filter = 2
+autowrap_mode = 2

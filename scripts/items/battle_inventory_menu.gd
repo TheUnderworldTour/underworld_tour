@@ -3,6 +3,8 @@ extends CanvasLayer
 @onready var _toggle: Button = $ItemsButton
 @onready var _panel: PanelContainer = $ItemsPanel
 @onready var _items: GridContainer = $ItemsPanel/Content/Items
+@onready var _hover_panel: PanelContainer = $HoverPanel
+@onready var _hover_text: Label = $HoverPanel/Text
 @onready var _close: Button = $ItemsPanel/Content/CloseButton
 
 var _owns_pause: bool = false
@@ -45,11 +47,30 @@ func _on_close_button_pressed() -> void:
 	_set_open(false)
 
 
+func _on_item_tile_mouse_entered(tile: Button, details: String) -> void:
+	if not _panel.visible:
+		return
+	_hover_text.text = details
+	_hover_panel.reset_size()
+	var viewport_size: Vector2 = _panel.get_viewport_rect().size
+	var desired: Vector2 = tile.global_position + Vector2(tile.size.x + 8.0, 0.0)
+	_hover_panel.position = Vector2(
+		clampf(desired.x, 0.0, maxf(0.0, viewport_size.x - _hover_panel.size.x)),
+		clampf(desired.y, 0.0, maxf(0.0, viewport_size.y - _hover_panel.size.y))
+	)
+	_hover_panel.show()
+
+
+func _on_item_tile_mouse_exited() -> void:
+	_hover_panel.hide()
+
+
 func _on_game_state_inventory_changed() -> void:
 	_refresh_items()
 
 
 func _set_open(open: bool) -> void:
+	_hover_panel.hide()
 	_panel.visible = open
 	if open:
 		_refresh_items()
@@ -62,6 +83,7 @@ func _set_open(open: bool) -> void:
 
 
 func _refresh_items() -> void:
+	_hover_panel.hide()
 	for child: Node in _items.get_children():
 		_items.remove_child(child)
 		child.queue_free()
@@ -76,9 +98,11 @@ func _refresh_items() -> void:
 		tile.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		tile.focus_mode = Control.FOCUS_NONE
 		var item_name: String = definition.display_name if definition != null else String(item_id)
-		tile.tooltip_text = item_name
+		var details: String = item_name
 		if definition != null:
-			tile.tooltip_text += "\n" + definition.description
+			details += "\n" + definition.description
+		tile.mouse_entered.connect(_on_item_tile_mouse_entered.bind(tile, details))
+		tile.mouse_exited.connect(_on_item_tile_mouse_exited)
 		if definition != null and definition.icon != null:
 			tile.icon = definition.icon
 			tile.expand_icon = true
