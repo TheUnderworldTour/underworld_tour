@@ -28,6 +28,7 @@ signal missed
 @export var hit_window := 0.15
 
 @onready var _hit_box: CollisionShape2D = $HitBox
+@onready var _hold_splash: CPUParticles2D = $HoldSplash
 
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
@@ -66,7 +67,8 @@ func _ready() -> void:
 	_travel_time = beats_early * _sec_per_beat
 	_off_screen_position = _get_spawn_position()
 	position = _off_screen_position
-	
+	_hold_splash.global_position = target_position
+
 	var bar_height := _get_bar_height()
 	if length_beats > 1:
 		var shape: RectangleShape2D = _hit_box.shape.duplicate()
@@ -102,10 +104,18 @@ func _physics_process(_delta: float) -> void:
 		# Keep scrolling past the receptor until the tail end arrives.
 		position = _off_screen_position.lerp(target_position, progress)
 		_process_hold_end()
+		if _holding and progress >= 1.0 and not _hold_splash.emitting:
+			_hold_splash.show()
+			_hold_splash.emitting = true
 		return
 	position = _off_screen_position.lerp(target_position, clampf(progress, 0.0, 1.0))
 	if progress >= 1.0:
 		_check_miss()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DISABLED and is_instance_valid(_hold_splash):
+		_stop_hold_splash()
 
 
 func can_hit() -> bool:
@@ -186,7 +196,13 @@ func _get_spawn_position() -> Vector2:
 	return Vector2(target_position.x, target_position.y - 800.0)
 
 
+func _stop_hold_splash() -> void:
+	_hold_splash.emitting = false
+	_hold_splash.hide()
+
+
 func _despawn(fade_color: Color = Color.WHITE) -> void:
+	_stop_hold_splash()
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate", fade_color, 0.12)
