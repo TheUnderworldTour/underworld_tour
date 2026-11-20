@@ -130,7 +130,11 @@ func _on_fight_button_pressed() -> void:
 	if _selected_node_id != 0:
 		return
 	_fight_button.disabled = true
-	var result: Error = get_tree().change_scene_to_file(RHYTHM_SCENE)
+	CombatSetup.set_active_player("bassist")
+	CombatSetup.set_enemies(["skeleton1", "skeleton1", "skeleton1"])
+	var result: Error = await CombatSetup.init_combat()
 	if result != OK:
 		_fight_button.disabled = false
-		push_error("could not open rhythm core: %s" % error_string(result))
+		push_error("Could not beign combat: %s" % error_string(result))
+		
+	

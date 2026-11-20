@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://cu21ybrqkyyer"]
+[gd_scene format=3 uid="uid://cu21ybrqkyyer"]
 
 [ext_resource type="Script" uid="uid://v5w7hrq1xw1e" path="res://scripts/map_camera.gd" id="1_0wcw4"]
 [ext_resource type="Script" uid="uid://bw0ikd5f3oeue" path="res://scripts/map_path.gd" id="2_ne7uw"]
