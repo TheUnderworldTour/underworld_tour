@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://kbyh3hk060jm" path="res://scripts/note.gd" id="1_1bnk6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ys324"]
+resource_local_to_scene = true
 
 [node name="Note" type="Area2D" unique_id=1572502280]
 top_level = true
