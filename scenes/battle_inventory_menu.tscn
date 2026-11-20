@@ -30,5 +30,8 @@ text = "Items"
 
 [node name="Items" type="VBoxContainer" parent="ItemsPanel/Content"]
 
+[node name="DemoItemsButton" type="Button" parent="ItemsPanel/Content"]
+text = "Equip demo items and restart"
+
 [node name="CloseButton" type="Button" parent="ItemsPanel/Content"]
 text = "Close"

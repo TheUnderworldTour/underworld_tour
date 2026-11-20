@@ -4,9 +4,7 @@ signal inventory_changed
 
 const SAVE_PATH: String = "user://game_state.json"
 const SAVE_VERSION: int = 1
-const ITEM_DEFINITIONS: Array[ItemDefinition] = [
-	preload("res://assets/items/damage_boost.tres"),
-]
+const ITEM_DEFINITIONS: Array[ItemDefinition] = ItemCatalog.DEFINITIONS
 
 var _inventory: Dictionary[StringName, int] = {&"damage_boost": 1}
 var _cleared_encounters: Dictionary[StringName, bool] = {}
@@ -18,6 +16,18 @@ func _ready() -> void:
 		_save_loaded = load_game()
 
 
+func equip_demo_items() -> bool:
+	var previous: Dictionary[StringName, int] = _inventory.duplicate()
+	for definition: ItemDefinition in ITEM_DEFINITIONS:
+		if definition.id != &"damage_boost":
+			_inventory[definition.id] = maxi(1, get_item_quantity(definition.id))
+	if not save_game():
+		_inventory = previous
+		return false
+	inventory_changed.emit()
+	return true
+
+
 func has_item(item_id: StringName) -> bool:
 	return get_item_quantity(item_id) > 0
 
@@ -27,10 +37,7 @@ func get_item_quantity(item_id: StringName) -> int:
 
 
 func get_item_definition(item_id: StringName) -> ItemDefinition:
-	for definition: ItemDefinition in ITEM_DEFINITIONS:
-		if definition.id == item_id:
-			return definition
-	return null
+	return ItemCatalog.get_definition(item_id)
 
 
 func get_battle_loadout() -> Dictionary[StringName, int]:

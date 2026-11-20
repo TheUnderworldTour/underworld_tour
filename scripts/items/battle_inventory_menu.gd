@@ -11,6 +11,7 @@ var _owns_pause: bool = false
 func _ready() -> void:
 	_toggle.pressed.connect(_on_items_button_pressed)
 	_close.pressed.connect(_on_close_button_pressed)
+	$ItemsPanel/Content/DemoItemsButton.pressed.connect(_on_demo_items_button_pressed)
 	GameState.inventory_changed.connect(_on_game_state_inventory_changed)
 	_refresh_items()
 
@@ -28,6 +29,16 @@ func _exit_tree() -> void:
 
 func _on_items_button_pressed() -> void:
 	_set_open(not _panel.visible)
+
+
+func _on_demo_items_button_pressed() -> void:
+	if not GameState.equip_demo_items():
+		$ItemsPanel/Content/DemoItemsButton.text = "Could not save demo items"
+		return
+	_set_open(false)
+	var result: Error = get_tree().reload_current_scene()
+	if result != OK:
+		push_error("Could not restart the battle.")
 
 
 func _on_close_button_pressed() -> void:

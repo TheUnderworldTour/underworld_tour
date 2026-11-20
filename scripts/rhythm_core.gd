@@ -76,6 +76,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		extra_note_played.emit(direction, _conductor.song_position)
 
 
+func set_perfect_window_bonus(seconds: float) -> void:
+	_judge.perfect_window_bonus = maxf(0.0, seconds)
+
+
 func stop_chart() -> void:
 	_chart_stopped = true
 	_conductor.stop()
