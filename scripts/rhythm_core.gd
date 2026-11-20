@@ -14,7 +14,7 @@ const HIT_ACTIONS: Dictionary[String, int] = {
 }
 
 @export var start_delay_beats := 4
-@export var chart: Array[Vector2i] = []
+@export_file("*.json") var chart_path: String
 
 @onready var _conductor: AudioStreamPlayer = $Conductor
 @onready var _score_label: Label = $HUD/ScoreLabel
@@ -34,16 +34,14 @@ var _next_note: int = 0
 var _completed_notes: int = 0
 var _chart_stopped: bool = false
 var _notes: Array[Note] = []
+var _chart: Array[Vector3i] = []
 
 
 func _ready() -> void:
-	# This will hopefully be replaced by a .json file in the future
-	# 3 = left, 0 = up, 2 = down, 1 = right
-	chart = [
-		Vector2i(1, 3), Vector2i(1, 0), Vector2i(4, 0), Vector2i(4, 2), Vector2i(8, 2), 
-		Vector2i(9, 3), Vector2i(10, 0), Vector2i(11, 0),
-	]
-	chart.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x)
+	if not _load_chart():
+		stop_chart()
+		return
+	_chart.sort_custom(func(first: Vector3i, second: Vector3i) -> bool: return first.x < second.x)
 	_judge = Judge.new()
 	add_child(_judge)
 	_judge.judged.connect(_on_judge_judged)
@@ -55,16 +53,24 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _chart_stopped:
 		return
 	var direction: int = -1
+	var released := false
 	for action: String in HIT_ACTIONS:
-		if event.is_action_pressed(action):
+		if event.is_action_pressed(action) or event.is_action_released(action):
 			direction = HIT_ACTIONS[action]
+			released = event.is_action_released(action)
 			break
 	if direction == -1:
+		return
+	if released:
+		var holding_note: Note = _find_holding_note(direction)
+		if holding_note != null:
+			holding_note.release_hold()
+			_prune_despawned_notes()
 		return
 	var best: Note = null
 	var best_accuracy: float = INF
 	for note: Note in _notes:
-		if not is_instance_valid(note) or note.direction != direction or not note.can_hit():
+		if not is_instance_valid(note) or note.lane != direction or not note.can_hit():
 			continue
 		var accuracy: float = note.get_accuracy()
 		if accuracy < best_accuracy:
@@ -72,8 +78,17 @@ func _unhandled_input(event: InputEvent) -> void:
 			best_accuracy = accuracy
 	if best != null:
 		best.hit_note()
+	elif _find_holding_note(direction) != null:
+		pass
 	elif _conductor.is_song_running():
 		extra_note_played.emit(direction, _conductor.song_position)
+
+
+func _find_holding_note(lane: int) -> Note:
+	for note: Note in _notes:
+		if is_instance_valid(note) and note.lane == lane and note.is_holding():
+			return note
+	return null
 
 
 func stop_chart() -> void:
@@ -82,19 +97,56 @@ func stop_chart() -> void:
 	set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
 
+func _load_chart() -> bool:
+	var file := FileAccess.open(chart_path, FileAccess.READ)
+	if file == null:
+		push_error("Cannot open chart '%s': %s" % [chart_path, error_string(FileAccess.get_open_error())])
+		return false
+	var json := JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		push_error("Invalid JSON in chart '%s' at line %d: %s" % [
+			chart_path, json.get_error_line(), json.get_error_message()
+		])
+		return false
+	var rows: Variant = json.data
+	if not (rows is Array) or rows.is_empty():
+		push_error("Chart '%s' must contain a non-empty array of notes." % chart_path)
+		return false
+	var entries: Array[Vector3i] = []
+	for index in range(rows.size()):
+		var row: Variant = rows[index]
+		if not (row is Array) or row.size() != 3 \
+				or not _is_chart_integer(row[0], 0, 2147483647) \
+				or not _is_chart_integer(row[1], 0, _receptors.size() - 1) \
+				or not _is_chart_integer(row[2], 1, 2147483647):
+			push_error("Invalid note %d in chart '%s': expected [beat, lane, length]." % [
+				index + 1, chart_path
+			])
+			return false
+		entries.append(Vector3i(int(row[0]), int(row[1]), int(row[2])))
+	_chart = entries
+	return true
+
+
+func _is_chart_integer(value: Variant, minimum: int, maximum: int) -> bool:
+	if not (value is int or value is float):
+		return false
+	var number := float(value)
+	return number >= minimum and number <= maximum and number == floorf(number)
+
+
 func _on_conductor_beat(position: int) -> void:
 	if _chart_stopped:
 		return
-	while _next_note < chart.size() and chart[_next_note].x - _conductor.beats_before_start <= position:
-		_spawn_note(chart[_next_note])
+	while _next_note < _chart.size() and _chart[_next_note].x - _conductor.beats_before_start <= position:
+		_spawn_note(_chart[_next_note])
 		_next_note += 1
 
 
-func _spawn_note(entry: Vector2i) -> void:
+func _spawn_note(entry: Vector3i) -> void:
 	var note: Note = NOTE_SCENE.instantiate()
 	note.chart_note_id = _next_note
-	note.target_beat = entry.x
-	note.direction = entry.y
+	note.chart_coords = entry
 	note.target_position = _receptors[entry.y]["position"]
 	note.hit.connect(_on_note_hit.bind(note))
 	note.missed.connect(_on_note_missed.bind(note))
@@ -105,7 +157,8 @@ func _spawn_note(entry: Vector2i) -> void:
 
 
 func _on_note_hit(accuracy: float, note: Note) -> void:
-	_judge.judge_note_hit(note, accuracy)
+	var phase := Judge.Phase.HOLD_START if note.length_beats > 1 else Judge.Phase.TAP
+	_judge.judge_note_hit(note, accuracy, phase)
 	character_portrait.play_good()
 
 
@@ -117,6 +170,7 @@ func _on_note_missed(note: Note) -> void:
 
 func _on_note_hold_completed(release_accuracy: float, note: Note) -> void:
 	_judge.judge_hold_completed(note, release_accuracy)
+	_prune_despawned_notes()
 
 
 func _on_note_hold_broken(note: Note) -> void:
@@ -141,7 +195,7 @@ func _on_judge_judged(
 
 	var event: RhythmJudgment = RhythmJudgment.new()
 	event.note_id = note.chart_note_id
-	event.lane = note.direction
+	event.lane = note.lane
 	event.target_beat = note.target_beat
 	event.song_time_sec = _conductor.song_position
 	event.tier = judgement
@@ -152,7 +206,7 @@ func _on_judge_judged(
 	note_judged.emit(event)
 	if phase != Judge.Phase.HOLD_START:
 		_completed_notes += 1
-		if _completed_notes == chart.size():
+		if _completed_notes == _chart.size():
 			chart_completed.emit()
 
 

@@ -7,7 +7,7 @@ signal hit(accuracy: float)
 
 ## Emitted when a long note's hold runs to completion with the key held.
 ## `release_accuracy` is the absolute seconds the release lands from the
-## hold's end beat (INF if the hold auto-completed while still held).
+## hold's end beat (near zero when the hold auto-completed while still held).
 signal hold_completed(release_accuracy: float)
 
 ## Emitted when a long note's hold is dropped before its end beat.
@@ -16,11 +16,9 @@ signal hold_broken
 ## Emitted when the note's hit window passes without input.
 signal missed
 
-## Beat number (from the conductor) this note should be struck on.
-@export var target_beat := 0
-
-## Direction the arrow points: 0 = up, 1 = right, 2 = down, 3 = left.
-@export_range(0, 3) var direction := 0
+## Chart coordinates of this note: x = beat to strike, y = lane (0 = up,
+## 1 = right, 2 = down, 3 = left), z = length in beats (1 = tap note).
+@export var chart_coords := Vector3i.ZERO
 
 ## How many beats before the target beat the note spawns on screen.
 @export var beats_early := 4
@@ -29,18 +27,37 @@ signal missed
 ## target beat counts as a hit.
 @export var hit_window := 0.15
 
+@onready var _hit_box: CollisionShape2D = $HitBox
+
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
 var _travel_time: float = 2.4
 var _has_been_hit := false
+var _holding := false
 var _off_screen_position: Vector2
 ## Where the note should be when the player strikes it; always assigned
 ## by the spawner (rhythm_core.gd) before the note enters the tree.
 var target_position: Vector2
 var chart_note_id: int = -1
 
-@onready var _arrow: Sprite2D = $Arrow
+var target_beat: int:
+	get:
+		return chart_coords.x
 
+
+var lane: int:
+	get:
+		return chart_coords.y
+
+
+var length_beats: int:
+	get:
+		return chart_coords.z
+
+const TRAVEL_DISTANCE := 800
+const TAP_HEIGHT := 48.0
+const BAR_WIDTH := 30.0
+const CORNER_RADIUS := 12.0
 
 func _ready() -> void:
 	_conductor = get_tree().get_first_node_in_group("conductor")
@@ -48,29 +65,55 @@ func _ready() -> void:
 		_sec_per_beat = _conductor.sec_per_beat
 	_travel_time = beats_early * _sec_per_beat
 	_off_screen_position = _get_spawn_position()
-	_arrow.rotation_degrees = direction * 90.0
 	position = _off_screen_position
+	
+	var bar_height := _get_bar_height()
+	if length_beats > 1:
+		var shape: RectangleShape2D = _hit_box.shape.duplicate()
+		shape.size = Vector2(shape.size.x, shape.size.y + bar_height)
+		_hit_box.shape = shape
+		_hit_box.position.y = -bar_height / 2.0
+		_hit_box.scale = Vector2(1.1, 1.1) * 1.0
+
+func _draw() -> void:
+	var bar_height := _get_bar_height()
+	if bar_height <= 0.0:
+		return
+	var style_box := StyleBoxFlat.new()
+	style_box.bg_color = Color.from_rgba8(197, 198, 198) # can be changed to match arrows
+	style_box.set_corner_radius_all(CORNER_RADIUS)
+	var bar_rect := Rect2(-BAR_WIDTH / 2.0, -bar_height, BAR_WIDTH, bar_height)
+	style_box.draw(get_canvas_item(), bar_rect)
 
 
 func _physics_process(_delta: float) -> void:
 	# Check to make sure we should actually show notes
-	if _has_been_hit or _conductor == null:
+	if _conductor == null:
 		return
 	if not _conductor.is_song_running():
 		return
-	var target_time := target_beat * _sec_per_beat
-	var spawn_time := target_time - _travel_time
+	var spawn_time := target_beat * _sec_per_beat - _travel_time
 	if _conductor.song_position < spawn_time:
 		return
-	
-	var progress := clampf((_conductor.song_position - spawn_time) / _travel_time, 0.0, 1.0)
-	position = _off_screen_position.lerp(target_position, progress)
+	if _has_been_hit:
+		return
+	var progress: float = (_conductor.song_position - spawn_time) / _travel_time
+	if _holding:
+		# Keep scrolling past the receptor until the tail end arrives.
+		position = _off_screen_position.lerp(target_position, progress)
+		_process_hold_end()
+		return
+	position = _off_screen_position.lerp(target_position, clampf(progress, 0.0, 1.0))
 	if progress >= 1.0:
 		_check_miss()
 
 
 func can_hit() -> bool:
-	return not _has_been_hit and _get_accuracy() <= hit_window
+	return not _has_been_hit and not _holding and _get_accuracy() <= hit_window
+
+
+func is_holding() -> bool:
+	return _holding
 
 
 func get_accuracy() -> float:
@@ -85,10 +128,41 @@ func get_time_error() -> float:
 
 
 func hit_note() -> void:
-	if _has_been_hit:
+	if _has_been_hit or _holding:
+		return
+	if length_beats > 1:
+		_holding = true
+		hit.emit(_get_accuracy())
 		return
 	_has_been_hit = true
 	hit.emit(_get_accuracy())
+	_despawn()
+
+
+## Called by the input owner (rhythm_core.gd) when the lane key is
+## released while this note is being held. Releasing after the tail end
+## completes the hold; releasing early breaks it.
+func release_hold() -> void:
+	if not _holding:
+		return
+	_holding = false
+	_has_been_hit = true
+	var end_time := (target_beat + length_beats) * _sec_per_beat
+	var release_error: float = _conductor.song_position - end_time
+	if release_error >= 0.0:
+		hold_completed.emit(absf(release_error))
+	else:
+		hold_broken.emit()
+	_despawn()
+
+
+func _process_hold_end() -> void:
+	var end_time := (target_beat + length_beats) * _sec_per_beat
+	if _conductor.song_position < end_time:
+		return
+	_holding = false
+	_has_been_hit = true
+	hold_completed.emit(absf(_conductor.song_position - end_time))
 	_despawn()
 
 
@@ -105,12 +179,21 @@ func _check_miss() -> void:
 	if _get_accuracy() > hit_window:
 		_has_been_hit = true
 		missed.emit()
-		_despawn()
+		_despawn(Color.RED)
 
 
 func _get_spawn_position() -> Vector2:
 	return Vector2(target_position.x, target_position.y - 800.0)
 
 
-func _despawn() -> void:
-	queue_free()
+func _despawn(fade_color: Color = Color.WHITE) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate", fade_color, 0.12)
+	tween.tween_property(self, "scale", scale * 0.85, 0.12)
+	tween.chain().tween_callback(queue_free)
+
+func _get_bar_height() -> float:
+	if length_beats <= 1:
+		return TAP_HEIGHT
+	return length_beats * (TRAVEL_DISTANCE / float(beats_early))
