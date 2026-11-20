@@ -19,6 +19,7 @@ script/source = "extends Node2D
 
 [node name="RhythmCore" type="Node2D" unique_id=1686427591]
 script = ExtResource("3_core")
+chart_path = "res://charts/stormer.json"
 
 [node name="Conductor" parent="." unique_id=218649454 instance=ExtResource("1_7cdm0")]
 stream = ExtResource("3_tqkto")
@@ -56,10 +57,10 @@ text = "Combo: 0"
 [node name="JudgementLabel" type="Label" parent="HUD" unique_id=618535285]
 top_level = true
 layout_mode = 0
-offset_left = 240.0
-offset_top = 300.0
-offset_right = 400.0
-offset_bottom = 323.0
+offset_left = 500.0
+offset_top = 20.0
+offset_right = 660.0
+offset_bottom = 43.0
 
 [node name="Playfield" type="Node2D" parent="." unique_id=939433344]
 

@@ -14,7 +14,7 @@ const HIT_ACTIONS: Dictionary[String, int] = {
 }
 
 @export var start_delay_beats := 4
-@export var chart: Array[Vector3i] = []
+@export_file("*.json") var chart_path: String
 
 @onready var _conductor: AudioStreamPlayer = $Conductor
 @onready var _score_label: Label = $HUD/ScoreLabel
@@ -34,17 +34,14 @@ var _next_note: int = 0
 var _completed_notes: int = 0
 var _chart_stopped: bool = false
 var _notes: Array[Note] = []
+var _chart: Array[Vector3i] = []
 
 
 func _ready() -> void:
-	# This will hopefully be replaced by a .json file in the future
-	# Lane order: 0 = up, 1 = right, 2 = down, 3 = left
-	# Vector3i entries are (beat, lane, length in beats)
-	chart = [
-		Vector3i(1, 3, 3), Vector3i(1, 0, 3), Vector3i(4, 0, 3), Vector3i(4, 2, 3), Vector3i(8, 2, 1),
-		Vector3i(9, 3, 1), Vector3i(10, 0, 1), Vector3i(11, 0, 1),
-	]
-	chart.sort_custom(func(a: Vector3i, b: Vector3i) -> bool: return a.x < b.x)
+	if not _load_chart():
+		stop_chart()
+		return
+	_chart.sort_custom(func(first: Vector3i, second: Vector3i) -> bool: return first.x < second.x)
 	_judge = Judge.new()
 	add_child(_judge)
 	_judge.judged.connect(_on_judge_judged)
@@ -100,11 +97,49 @@ func stop_chart() -> void:
 	set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
 
+func _load_chart() -> bool:
+	var file := FileAccess.open(chart_path, FileAccess.READ)
+	if file == null:
+		push_error("Cannot open chart '%s': %s" % [chart_path, error_string(FileAccess.get_open_error())])
+		return false
+	var json := JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		push_error("Invalid JSON in chart '%s' at line %d: %s" % [
+			chart_path, json.get_error_line(), json.get_error_message()
+		])
+		return false
+	var rows: Variant = json.data
+	if not (rows is Array) or rows.is_empty():
+		push_error("Chart '%s' must contain a non-empty array of notes." % chart_path)
+		return false
+	var entries: Array[Vector3i] = []
+	for index in range(rows.size()):
+		var row: Variant = rows[index]
+		if not (row is Array) or row.size() != 3 \
+				or not _is_chart_integer(row[0], 0, 2147483647) \
+				or not _is_chart_integer(row[1], 0, _receptors.size() - 1) \
+				or not _is_chart_integer(row[2], 1, 2147483647):
+			push_error("Invalid note %d in chart '%s': expected [beat, lane, length]." % [
+				index + 1, chart_path
+			])
+			return false
+		entries.append(Vector3i(int(row[0]), int(row[1]), int(row[2])))
+	_chart = entries
+	return true
+
+
+func _is_chart_integer(value: Variant, minimum: int, maximum: int) -> bool:
+	if not (value is int or value is float):
+		return false
+	var number := float(value)
+	return number >= minimum and number <= maximum and number == floorf(number)
+
+
 func _on_conductor_beat(position: int) -> void:
 	if _chart_stopped:
 		return
-	while _next_note < chart.size() and chart[_next_note].x - _conductor.beats_before_start <= position:
-		_spawn_note(chart[_next_note])
+	while _next_note < _chart.size() and _chart[_next_note].x - _conductor.beats_before_start <= position:
+		_spawn_note(_chart[_next_note])
 		_next_note += 1
 
 
@@ -171,7 +206,7 @@ func _on_judge_judged(
 	note_judged.emit(event)
 	if phase != Judge.Phase.HOLD_START:
 		_completed_notes += 1
-		if _completed_notes == chart.size():
+		if _completed_notes == _chart.size():
 			chart_completed.emit()
 
 
