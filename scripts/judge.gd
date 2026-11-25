@@ -9,11 +9,12 @@ signal judged(
 	judgement: Judgement, accuracy: float, time_error: float, note: Note, phase: Phase
 )
 
-enum Judgement { PERFECT, GREAT, GOOD, MISS }
+enum Judgement { PERFECT, GREAT, GOOD, MISS, HELLISH }
 enum Phase { TAP, HOLD_START, HOLD_END }
 
 ## Half-width in seconds of each judgement window, ordered tightest first.
 const WINDOWS := {
+	Judgement.HELLISH: 0.015,
 	Judgement.PERFECT: 0.045,
 	Judgement.GREAT: 0.09,
 	Judgement.GOOD: 0.135,
@@ -24,6 +25,7 @@ const RELEASE_PERFECT_WINDOW := 0.045
 const RELEASE_GOOD_WINDOW := 0.09
 
 const SCORES := {
+	Judgement.HELLISH: 350,
 	Judgement.PERFECT: 300,
 	Judgement.GREAT: 200,
 	Judgement.GOOD: 100,
@@ -32,6 +34,7 @@ const SCORES := {
 
 ## Accuracy fraction each judgement contributes toward a final grade.
 const ACCURACY_WEIGHTS := {
+	Judgement.HELLISH: 1.0,
 	Judgement.PERFECT: 1.0,
 	Judgement.GREAT: 0.7,
 	Judgement.GOOD: 0.4,
@@ -39,6 +42,7 @@ const ACCURACY_WEIGHTS := {
 }
 
 const TIER_COLORS := {
+	Judgement.HELLISH: Color("ffdb87"),
 	Judgement.PERFECT: Color.GOLD,
 	Judgement.GREAT: Color.HOT_PINK,
 	Judgement.GOOD: Color.GREEN,
@@ -51,6 +55,7 @@ var score := 0
 var combo := 0
 var max_combo := 0
 var tally := {
+	Judgement.HELLISH: 0,
 	Judgement.PERFECT: 0,
 	Judgement.GREAT: 0,
 	Judgement.GOOD: 0,

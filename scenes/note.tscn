@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://0p4udw2ctx1m"]
 
 [ext_resource type="Script" uid="uid://kbyh3hk060jm" path="res://scripts/note.gd" id="1_1bnk6"]
+[ext_resource type="PackedScene" path="res://scenes/flame_particles.tscn" id="2_flame"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ys324"]
 resource_local_to_scene = true
@@ -12,3 +13,8 @@ script = ExtResource("1_1bnk6")
 [node name="HitBox" type="CollisionShape2D" parent="." unique_id=475406340]
 scale = Vector2(1.1, 1.1)
 shape = SubResource("RectangleShape2D_ys324")
+
+[node name="HoldSplash" parent="." unique_id=349947636 instance=ExtResource("2_flame")]
+visible = false
+top_level = true
+z_index = 1

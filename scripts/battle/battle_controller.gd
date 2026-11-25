@@ -2,7 +2,7 @@ extends Node2D
 
 const ENCOUNTER_ID: StringName = &"demo_boss"
 const PLAYER_HEALTH: float = 100.0
-const BOSS_HEALTH: float = 55.0
+const BOSS_HEALTH: float = 5500.0
 
 @export_enum("Guitar:1", "Bass:2", "Keys:3", "Drums:4")
 var player_instrument: int = ItemDefinition.Instrument.GUITAR

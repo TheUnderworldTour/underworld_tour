@@ -2,6 +2,7 @@ class_name BattleResolver
 extends RefCounted
 
 const BASE_DAMAGE: Dictionary[Judge.Judgement, float] = {
+	Judge.Judgement.HELLISH: 12.0,
 	Judge.Judgement.PERFECT: 10.0,
 	Judge.Judgement.GREAT: 7.0,
 	Judge.Judgement.GOOD: 5.0,

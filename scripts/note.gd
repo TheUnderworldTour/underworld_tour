@@ -28,6 +28,7 @@ signal missed
 @export var hit_window := 0.15
 
 @onready var _hit_box: CollisionShape2D = $HitBox
+@onready var _hold_splash: CPUParticles2D = $HoldSplash
 
 var _conductor: AudioStreamPlayer
 var _sec_per_beat: float = 0.6
@@ -56,8 +57,11 @@ var length_beats: int:
 
 const TRAVEL_DISTANCE := 800
 const TAP_HEIGHT := 48.0
-const BAR_WIDTH := 30.0
-const CORNER_RADIUS := 12.0
+const OBSIDIAN := Color("241527")
+const IRON := Color("492438")
+const CINDER := Color("a13e39")
+const EMBER := Color("ff8042")
+const HOT_GOLD := Color("ffe4a0")
 
 func _ready() -> void:
 	_conductor = get_tree().get_first_node_in_group("conductor")
@@ -66,7 +70,8 @@ func _ready() -> void:
 	_travel_time = beats_early * _sec_per_beat
 	_off_screen_position = _get_spawn_position()
 	position = _off_screen_position
-	
+	_hold_splash.global_position = target_position
+
 	var bar_height := _get_bar_height()
 	if length_beats > 1:
 		var shape: RectangleShape2D = _hit_box.shape.duplicate()
@@ -76,14 +81,9 @@ func _ready() -> void:
 		_hit_box.scale = Vector2(1.1, 1.1) * 1.0
 
 func _draw() -> void:
-	var bar_height := _get_bar_height()
-	if bar_height <= 0.0:
-		return
-	var style_box := StyleBoxFlat.new()
-	style_box.bg_color = Color.from_rgba8(197, 198, 198) # can be changed to match arrows
-	style_box.set_corner_radius_all(CORNER_RADIUS)
-	var bar_rect := Rect2(-BAR_WIDTH / 2.0, -bar_height, BAR_WIDTH, bar_height)
-	style_box.draw(get_canvas_item(), bar_rect)
+	if length_beats > 1:
+		_draw_forged_tail(_get_bar_height())
+	_draw_forged_head()
 
 
 func _physics_process(_delta: float) -> void:
@@ -102,10 +102,18 @@ func _physics_process(_delta: float) -> void:
 		# Keep scrolling past the receptor until the tail end arrives.
 		position = _off_screen_position.lerp(target_position, progress)
 		_process_hold_end()
+		if _holding and progress >= 1.0 and not _hold_splash.emitting:
+			_hold_splash.show()
+			_hold_splash.emitting = true
 		return
 	position = _off_screen_position.lerp(target_position, clampf(progress, 0.0, 1.0))
 	if progress >= 1.0:
 		_check_miss()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DISABLED and is_instance_valid(_hold_splash):
+		_stop_hold_splash()
 
 
 func can_hit() -> bool:
@@ -186,12 +194,57 @@ func _get_spawn_position() -> Vector2:
 	return Vector2(target_position.x, target_position.y - 800.0)
 
 
+func _stop_hold_splash() -> void:
+	_hold_splash.emitting = false
+	_hold_splash.hide()
+
+
 func _despawn(fade_color: Color = Color.WHITE) -> void:
+	_stop_hold_splash()
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate", fade_color, 0.12)
 	tween.tween_property(self, "scale", scale * 0.85, 0.12)
 	tween.chain().tween_callback(queue_free)
+
+func _draw_forged_head() -> void:
+	var outline := PackedVector2Array([
+		Vector2(-9, -TAP_HEIGHT), Vector2(9, -TAP_HEIGHT), Vector2(18, -37),
+		Vector2(15, -12), Vector2(0, 0), Vector2(-15, -12), Vector2(-18, -37),
+	])
+	draw_colored_polygon(outline, OBSIDIAN)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-9, -TAP_HEIGHT), Vector2(9, -TAP_HEIGHT), Vector2(18, -37),
+		Vector2(0, -34), Vector2(-18, -37),
+	]), IRON)
+	outline.append(outline[0])
+	draw_polyline(outline, EMBER, 2.0, true)
+	var chevron := PackedVector2Array([Vector2(-7, 4), Vector2(0, -5), Vector2(7, 4)])
+	var angle := lane * PI / 2.0
+	for index in range(chevron.size()):
+		chevron[index] = chevron[index].rotated(angle) + Vector2(0, -24)
+	draw_polyline(chevron, HOT_GOLD, 3.5, true)
+	draw_circle(Vector2(0, -8), 2.0, EMBER, true, -1.0, true)
+
+
+func _draw_forged_tail(height: float) -> void:
+	var outline := PackedVector2Array([
+		Vector2(0, -height), Vector2(10, -height + 12), Vector2(10, -34),
+		Vector2(-10, -34), Vector2(-10, -height + 12),
+	])
+	draw_colored_polygon(outline, OBSIDIAN)
+	outline.append(outline[0])
+	draw_polyline(outline, CINDER, 2.0, true)
+	draw_line(Vector2(0, -height + 6), Vector2(0, -42), EMBER, 2.0, true)
+	var link_spacing := maxf(25.0, height / 96.0)
+	var link_y := -64.0
+	while link_y > -height + 16.0:
+		draw_polyline(PackedVector2Array([
+			Vector2(0, link_y - 7), Vector2(7, link_y), Vector2(0, link_y + 7),
+			Vector2(-7, link_y), Vector2(0, link_y - 7),
+		]), EMBER, 2.0, true)
+		link_y -= link_spacing
+
 
 func _get_bar_height() -> float:
 	if length_beats <= 1:
