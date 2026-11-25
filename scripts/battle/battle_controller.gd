@@ -2,7 +2,7 @@ extends Node2D
 
 const ENCOUNTER_ID: StringName = &"demo_boss"
 const PLAYER_HEALTH: float = 100.0
-const BOSS_HEALTH: float = 55.0
+const BOSS_HEALTH: float = 5500.0
 
 @export_group("Boss Rhythm Penalties")
 @export var missed_note_penalty: RhythmPenalty

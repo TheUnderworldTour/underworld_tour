@@ -14,7 +14,7 @@ script = ExtResource("1_1bnk6")
 scale = Vector2(1.1, 1.1)
 shape = SubResource("RectangleShape2D_ys324")
 
-[node name="HoldSplash" parent="." instance=ExtResource("2_flame")]
+[node name="HoldSplash" parent="." unique_id=349947636 instance=ExtResource("2_flame")]
 visible = false
 top_level = true
 z_index = 1

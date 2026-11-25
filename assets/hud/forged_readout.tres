@@ -1,0 +1,19 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/hud/forged_plaque.svg" id="1_plaque"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_plaque"]
+content_margin_left = 34.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+texture = ExtResource("1_plaque")
+texture_margin_left = 30.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+
+[resource]
+Label/colors/font_color = Color(1, 0.894118, 0.627451, 1)
+Label/font_sizes/font_size = 18
+Label/styles/normal = SubResource("StyleBoxTexture_plaque")

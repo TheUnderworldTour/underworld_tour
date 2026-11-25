@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/battle/battle_controller.gd" id="1_controller"]
 [ext_resource type="PackedScene" path="res://scenes/rhythm_core.tscn" id="2_rhythm"]
 [ext_resource type="Script" path="res://scripts/battle/rhythm_penalty.gd" id="3_penalty"]
+[ext_resource type="Theme" path="res://assets/hud/forged_readout.tres" id="4_readout"]
 
 [sub_resource type="Resource" id="Resource_missed_note"]
 script = ExtResource("3_penalty")
@@ -25,14 +26,21 @@ extra_note_penalty = SubResource("Resource_extra_note")
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -200.0
+offset_left = -268.0
 offset_top = 16.0
 offset_right = -16.0
 grow_horizontal = 0
+theme_override_constants/separation = 8
 
 [node name="PlayerHealth" type="Label" parent="BattleHud/Readout"]
+custom_minimum_size = Vector2(0, 44)
+theme = ExtResource("4_readout")
+vertical_alignment = 1
 
 [node name="BossHealth" type="Label" parent="BattleHud/Readout"]
+custom_minimum_size = Vector2(0, 44)
+theme = ExtResource("4_readout")
+vertical_alignment = 1
 
 [node name="Result" type="Label" parent="BattleHud/Readout"]
 
