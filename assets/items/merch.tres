@@ -1,0 +1,12 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_definition.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"merch"
+display_name = "Merch"
+description = "Reduces miss and extra-note damage by 15% per copy, capped at 75%."
+instrument = 0
+effect = 2
+amount = 0.15

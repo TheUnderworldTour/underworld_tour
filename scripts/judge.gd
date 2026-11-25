@@ -49,6 +49,8 @@ const TIER_COLORS := {
 	Judgement.MISS: Color.RED,
 }
 
+var perfect_window_bonus: float = 0.0
+
 var score := 0
 var combo := 0
 var max_combo := 0
@@ -95,7 +97,10 @@ func get_final_accuracy() -> float:
 
 func _classify(accuracy: float) -> Judgement:
 	for judgement: Judgement in WINDOWS:
-		if accuracy <= WINDOWS[judgement]:
+		var window: float = WINDOWS[judgement]
+		if judgement == Judgement.PERFECT:
+			window = minf(WINDOWS[Judgement.GREAT], window + perfect_window_bonus)
+		if accuracy <= window:
 			return judgement
 	return Judgement.MISS
 

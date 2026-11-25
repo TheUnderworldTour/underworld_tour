@@ -4,6 +4,9 @@ const ENCOUNTER_ID: StringName = &"demo_boss"
 const PLAYER_HEALTH: float = 100.0
 const BOSS_HEALTH: float = 5500.0
 
+@export_enum("Guitar:1", "Bass:2", "Keys:3", "Drums:4")
+var player_instrument: int = ItemDefinition.Instrument.GUITAR
+
 @export_group("Boss Rhythm Penalties")
 @export var missed_note_penalty: RhythmPenalty
 @export var extra_note_penalty: RhythmPenalty
@@ -16,6 +19,7 @@ const BOSS_HEALTH: float = 5500.0
 
 var _state: BattleState
 var _resolver: BattleResolver = BattleResolver.new()
+var _chart_finished: bool = false
 
 
 func _ready() -> void:
@@ -24,10 +28,21 @@ func _ready() -> void:
 	_rhythm_core.extra_note_played.connect(_on_rhythm_core_extra_note_played)
 	_rhythm_core.chart_completed.connect(_on_rhythm_core_chart_completed)
 	_retry_button.pressed.connect(_on_retry_button_pressed)
+	_rhythm_core.set_perfect_window_bonus(_state.get_modifier(
+		ItemDefinition.Effect.PERFECT_WINDOW, ItemDefinition.Instrument.ALL
+	))
 	_refresh_health()
 
 
+func _process(delta: float) -> void:
+	_resolver.advance_effects(delta, _state)
+	if _chart_finished:
+		_resolver.finish_chart(_state)
+	_publish_state()
+
+
 func _on_rhythm_core_note_judged(event: RhythmJudgment) -> void:
+	event.instrument = player_instrument as ItemDefinition.Instrument
 	_resolver.resolve_judgment(event, _state, missed_note_penalty)
 	_publish_state()
 
@@ -38,6 +53,7 @@ func _on_rhythm_core_extra_note_played(_lane: int, _song_time_sec: float) -> voi
 
 
 func _on_rhythm_core_chart_completed() -> void:
+	_chart_finished = true
 	if _state.outcome == BattleState.Outcome.ACTIVE:
 		_resolver.finish_chart(_state)
 		_publish_state()

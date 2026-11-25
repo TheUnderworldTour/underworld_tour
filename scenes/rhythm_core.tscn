@@ -146,9 +146,19 @@ texture = ExtResource("5_ss7mm")
 position = Vector2(192, 461)
 
 [node name="BassistPortrait" parent="." unique_id=1348098528 instance=ExtResource("9_lmn3w")]
-position = Vector2(1013, 488)
+position = Vector2(1064, 393)
 scale = Vector2(0.72, 0.72)
 character_name = "bassist"
+
+[node name="DrummerPortrait" parent="." unique_id=177346594 instance=ExtResource("9_lmn3w")]
+position = Vector2(969.99994, 485.99997)
+scale = Vector2(0.72, 0.72)
+character_name = "drummer"
+
+[node name="PianistPortrait" parent="." unique_id=212103422 instance=ExtResource("9_lmn3w")]
+position = Vector2(1079, 515)
+scale = Vector2(0.72, 0.72)
+character_name = "pianist"
 
 [node name="EnemyPortrait1" parent="." unique_id=720802032 instance=ExtResource("9_lmn3w")]
 position = Vector2(571, 233.00002)
