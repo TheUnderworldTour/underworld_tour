@@ -24,6 +24,7 @@ var active_player := "guitarist"
 var active_enemies: Array[String] = []
 
 var _spawned_enemies: Array[EnemyPortrait] = []
+var _enemy_counts := {}
 
 func set_active_player(player:String)-> void:
 	if player not in characters:
@@ -88,9 +89,12 @@ func _apply_player_layout(scene:RhythmCore) -> void:
 			
 func _apply_enemies(scene: RhythmCore)-> void:
 	for e in _spawned_enemies:
-		if is_instance_valid(e):
+		if is_instance_valid(e): # in case enemy died and was removed by another block
+			if e.get_parent():
+				e.get_parent().remove_child(e) # unlink from parent
 			e.queue_free()
 	_spawned_enemies.clear()
+	_enemy_counts.clear()
 	
 	var count := active_enemies.size()
 	for i in count:
@@ -104,7 +108,10 @@ func _apply_enemies(scene: RhythmCore)-> void:
 		
 func _make_enemy(enemy_name: String) -> EnemyPortrait:
 	var enemy := EnemyPortrait.new()
-	enemy.name = enemy_name
+	
+	var index: int = _enemy_counts.get(enemy_name,0) # get associated count
+	enemy.name = "%s_%d" % [enemy_name, index] # name in format [enemy]_[index] eg skeleton1_2
+	_enemy_counts[enemy_name] = index + 1 # increment type count
 	
 	var sprite := Sprite2D.new()
 	sprite.name = "Portrait"
