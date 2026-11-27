@@ -2,3 +2,6 @@
 .godot/
 /android/
 /docs/images/context_diagram.png.import
+
+__pycache__/
+*.pyc
